@@ -10,14 +10,18 @@
 ;;; return: 
 (define (dice! lst lst-one lst-two)
   (cond
+    ((and (list? lst) (list? list-one) (list? list-two))
+      (error "error: 'dice!' requires all arguments to be list's"))
     ((or (null? lst ) (null? (cdr lst)))
-     (cons (reverse lst-two) lst-one))
+      (cons (reverse lst-two) lst-one))
     (else (dice! (cdr lst) (cdr lst-one) (cons (car lst-one) lst-two)))))
 
 ;;; method: The main API function to slice a list in to two parts.
-;;; param: list - The full list to slit 
+;;; param: list - The full list to slice 
 ;;; return: The input list split to pieces
 (define (slice! lst)
+  (if ((not (list? lst)))
+    (error "error: 'slice!' requires it's argument to be a list"))
   (dice! lst lst '()))
 
 ;;; method: Merge to lists together with a given predicate function.
@@ -55,12 +59,12 @@
 
 ;------ All algorithm testing  ------;
 
-;;; All test cases for mergesort
+;;; All test cases for 'mergesort'
 (define (test-null) '())
 (define (test-onesie) '(9))
 (define (test-sorted) '(1 2 3 4 5 6))
 (define (test-unsort) '(9 2 3 8 7 1))
-;;; All test cases for merge
+;;; All test cases for 'merge'
 (define (test-merge-one) (cons (list 2) (list 1)))
 (define (test-merge-couple) (cons (list 1234 3 6) (list 2 39 8 1)))
 (define (test-merge-null) (cons '() (list 2 3 4)))
@@ -68,6 +72,8 @@
   
 ;;; Helper function to make defining/calling tests easier and more sane.
 (define (merge-test-helper lst)
+  (if (not (list? lst))
+    (error "error 'merge-test-helper' requires it's argument to be a list"))
   (merge <= (car lst) (cdr lst)))
 
 ;;; Define all the 'merge' test cases
