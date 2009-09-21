@@ -3,13 +3,13 @@
 ;;;; Author: Brian Gianforcaro
 ;;;; PLC Lab #1 - Merge sort in scheme 
 
-;;; method: Auxiliary recursive dice function.
+;;; method: merge sort API function to recursively dice function.
 ;;; param: list - The full list for book keeping
 ;;; param: list-one - The first half of the split into two
 ;;; param: list-two - The second half of the split list
 ;;; return: 
 (define (dice! lst lst-one lst-two)
-  (cond 
+  (cond
     ((or (null? lst ) (null? (cdr lst)))
      (cons (reverse lst-two) lst-one))
     (else (dice! (cdr lst) (cdr lst-one) (cons (car lst-one) lst-two)))))
@@ -20,34 +20,37 @@
 (define (slice! lst)
   (dice! lst lst '()))
 
-;;; method: Merge to lists togeather with a given preddicate function. 
-;;; param: f? - Predicate function to use when sorting the meger.
+;;; method: Merge to lists together with a given predicate function.
+;;; param: f? - Predicate function to use when sorting the merge.
 ;;; param: list-one - First list of the two to merge.
 ;;; param: list-two - Second list to merge of the two.
 ;;; return: The product of both lists sorted per the predicate.
 (define (merge f? lst-one lst-two)
   (cond
+    ((not (procedure? f?))
+      (error "error: 'merge' requires first arg to be a procedure"))
+    ((not (and (list? list-one) (list? list-two))
+      (error "error: 'merge' requires second and third arg's to be list's"))
     ((null? lst-one) lst-two)
-    ((null? lst-two) lst-one)   
+    ((null? lst-two) lst-one)
     ((f? (car lst-one) (car lst-two))
-     (cons (car lst-one) (merge f? (cdr lst-one) lst-two)))
+      (cons (car lst-one) (merge f? (cdr lst-one) lst-two)))
     (else (cons (car lst-two) (merge f? lst-one (cdr lst-two))))))
 
 
 ;;; method: The main interface
 ;;; param: f? - predicate to use when sorting
-;;; param: lst - list to sort via the "p" preddicate function.
+;;; param: lst - list to sort via the "p" predicate function.
 ;;; return: the resulting sorted list.
 (define (mergesort f? lst)
   (cond
     ((not (procedure? f?))
-     (error "error: megesort requries the first arg to be a procedure."))
+      (error "error: 'megesort' requires the first arg to be a procedure."))
     ((not (list? lst))
-     (error "error: mergesort requires the second arg to be a list.")) 
+      (error "error: 'mergesort' requires the second arg to be a list."))
     ((or (null? lst) (null? (cdr lst))) lst)
-    (else (merge f? 
-            (mergesort f? (car (slice! lst))) (mergesort f? (cdr (slice! lst)))))))
-
+    (else (merge f?
+      (mergesort f? (car (slice! lst))) (mergesort f? (cdr (slice! lst)))))))
 
 
 ;------ All algorithm testing  ------;
@@ -63,32 +66,33 @@
 (define (test-merge-null) (cons '() (list 2 3 4)))
 (define (test-merge-null2)(cons (list 2 3 4) '()))
   
-;;; Define all the 'merge' test cases
+;;; Helper function to make defining/calling tests easier and more sane.
 (define (merge-test-helper lst)
   (merge <= (car lst) (cdr lst)))
-(define (run-all-merge-tests)
-  (cond 
-    ((not (equal? (merge-test-helper (test-merge-one)) '(1 2)))
-         (merge-test-helper (test-merge-one)(error "Test-merge-one failed!"))
-    ((not (equal? (merge-test-helper (test-merge-couple)) '(2 39 8 1 1234 3 6)))
-         (error "Test-merge-couple failed!"))
-    ((not (equal? (merge-test-helper (test-merge-null)) '(2 3 4)))
-         (error "Test-merge-null failed!"))
-    ((not (equal? (merge-test-helper (test-merge-null2)) '(2 3 4)))
-         (error "Test-merge-null2 failed!")))))
 
-;;; Define all the 'mergesort' test cases 
+;;; Define all the 'merge' test cases
+(define (run-all-merge-tests)
+  (cond
+    ((not (equal? (merge-test-helper (test-merge-one)) '(1 2)))
+      (merge-test-helper (test-merge-one)(error "Test-merge-one failed!"))
+    ((not (equal? (merge-test-helper (test-merge-couple)) '(2 39 8 1 1234 3 6)))
+      (error "Test-merge-couple failed!"))
+    ((not (equal? (merge-test-helper (test-merge-null)) '(2 3 4)))
+      (error "Test-merge-null failed!"))
+    ((not (equal? (merge-test-helper (test-merge-null2)) '(2 3 4)))
+      (error "Test-merge-null2 failed!")))))
+
+;;; Define all the 'mergesort' test cases
 (define (run-all-tests)
   (cond
     ((not (equal? (mergesort <= (test-null)) (sort (test-null) <)))
-     (error "Test-null failed!")) 
+      (error "Test-null failed!"))
     ((not (equal? (mergesort <= (test-onesie)) (sort (test-onesie) <)))
-     (error "Test-onesie failed!"))
+      (error "Test-onesie failed!"))
     ((not (equal? (mergesort <= (test-sorted)) (sort (test-sorted) <)))
-     (error "Test-sorted failed!"))
+      (error "Test-sorted failed!"))
     ((not (equal? (mergesort <= (test-unsort)) (sort (test-unsort) <)))
-     (error "Test-unsorted failed!"))))
-
+      (error "Test-unsorted failed!"))))
 
 ; Run all tests cases ;
 (run-all-merge-tests)
