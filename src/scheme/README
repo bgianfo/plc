@@ -1,0 +1,44 @@
+
+Original URL: http://www.cs.rit.edu/~vcss450/Labs/Scheme/mergesort.html
+
+
+ Write a Scheme function that accepts a list as a parameter,
+ along with a comparison function, and returns a list.
+ The returned list is a sorted version of that list.
+ Here are the details:
+
+ Function name: 
+ --------------
+		 mergesort 	a Scheme "procedure"
+
+ Arguments:
+ ---------
+		original        A list.
+		comp		A function that compares its two arguments and returns true iff
+				the first argument should appear before the second in a sorted list
+
+Postcondition: 
+--------------
+		returned value  All of the elements that were in original are in the result,
+				including the same duplication of elements. 
+				No additional elements are in the result.
+
+				The elements appear in the result in sorted order, 
+				i.e., for any contiguous sublist of the result,
+				its first element (car) is its smallest value.
+
+
+
+
+
+It is required that your code define no global variables (besides functions) 
+nor perform any sequential operations (PROG, LOOP, DO, ...).
+You also should not use any inequality or equality functions inside your solution.
+Just use the comp function.
+
+To get credit your code must use a form of the merge sort algorithm
+
+Some comments are a good thing. 
+You should at least explain each function.
+Occasional comments on individual lines of a function are OK,
+but don't add so many that the code gets obscured.
