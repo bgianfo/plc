@@ -1,2 +1,23 @@
 
 Prolog lab for PLC 
+
+url: http://www.cs.rit.edu/~vcss450/Labs/Prolog/prolog.html
+
+Part 1: Integer Merge Sort in Prolog
+------------------------------------
+
+Specification
+Write a Prolog predicate of arity 2 named int_mergesort that is satisfied when the first parameter is an integer list and the second parameter is a sorted version of the first parameter.
+
+int_mergesort  
+
+The first parameter may be assumed to always be instantiated with a ground term when int_mergesort is used in a top-level goal. Thus, int_mergesort behaves like a function from its first parameter to its second parameter.
+
+Additional Details
+------------------
+* Your solution must use a form of the merge sort algorithm.
+* Since the parameters are specified to be integer lists, you may freely use the built-in Prolog predicates on integers (<, <=, =:=, ...).
+* You will need to introduce auxilary predicates to implement splitting the list and merging two sorted lists.
+* In comments, introduce each top-level goal. Thus, int_mergesort behaves like a function from its first parameter to its 
+
+
