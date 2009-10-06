@@ -1,49 +1,71 @@
+% Merge sort routines
 
+% Split base case, can't split an empty list.
+split_two([],[],[])
+% Split a list with a single element, 
+% first is a that list, second is empty list.
+split_two([L],[L], []).
+% Do the actual work to split to two lists into two sections.
+split_two( IN, X, Y ):- append( X, Y, IN ),
+                        length( X, LENX ), length( Y, LENY ), 
+                        ( 0 =:= LENY - LENX ; 1 =:= LENY - LENX ).
 
+% Base cases, merge any empty list with a non
+% empty list by just returning the non empty.
+merge_two( [], L, L ).
+% Opposite base cases of the above, merge any
+% empty list with a non empty list by just returning the non empty.
+merge_two( L, [], L ).
 
-% Merge sort
+% If the Head of list one is less than or equal to the head of list two, 
+% recursively   merge the tail of list one with the entirety of list two. 
+merge_two( [HL1|TL1], [HL2,TL2], [HL1|MERGED] ) :- HL1 =< HL2,
+                                                   merge( TL1, [HL2|TL2], MERGED ).
 
-% Merge sort base cases when we have a one element list, just return it.
-int_mergesort([ONE], [ONE]).
+% If the Head of list one is greater than the head of list two, 
+% recursively  merge list one with the tail of list two. 
+merge_two( [HL1|TL1], [HL2,TL2], [HL2|MERGED] ) :- HL1 > HL2, 
+                                                   merge( [HL1|TL1], TL2, MERGED ).
 
 % Merge sort base case #2 when we have a empty list, return empty.
-int_mergesort([], []).
+int_mergesort( [], [] ).
+% Merge sort base cases when we have a one element list, just return it.
+int_mergesort( [ONE], [ONE] ).
+% Run the actual merge sort, LS is the input list, FL is the final sorted list.
+int_mergesort( LS, FL ) :- split( LS, L1, L2 ),
+                           mergesort( L1, SORTED1 ),
+                           mergesort( L2, SORTED2 ),
+                           merge( SORTED1, SORTED2, FL ).
 
-split([LST], [H|T]):-
-
-merge([L1], [L2], [R] :- 
-
-int_mergesort( [HF|TF], SL ) :- 
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 epsilon([]).
 
-atom( A )
+atom( A ) :-
 
-seq( REG1, REG2 )
+seq( REG1, REG2 ) :-
 
-alt( REG1, REG2 )
+alt( REG1, REG2 ) :-
 
-star( REGEX, [L] )
+star( REGEX, [L] ) :-
 
-re_match( REGEX, ATOM, LST )
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+re_match( REGEX, ATOM, LST ) :-
 
 
-leaf([]).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-node(BTL, E, BTR)
+leaf( [] ).
 
-btree_to_list( BT, L )
+node( BTL, E, BTR ) :-
 
-btree_depth( BT, D )
+btree_to_list( BT, L ) :-
 
-btree_iso( BT1, BT2 )
 
-btree_subtree( BT1, BT2 ) 
+btree_depth( BT, D ) :- 
+btree_depth( BT, D ) :- btree_depth( BT, DR ), D is DR + 1;
+
+btree_iso( BT1, BT2 ) :-
+
+btree_subtree( BT1, BT2 ) :-
 
 
