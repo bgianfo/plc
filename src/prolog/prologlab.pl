@@ -1,14 +1,22 @@
+
+% PLC Lab #2 
+% Author: Brian Gianforcaro 
+% Tested and developed GNU Prolog v1.3.1
+
 % Merge sort routines
 
 % Split base case, can't split an empty list.
-split_two([],[],[])
+split_two([],[],[]).
 % Split a list with a single element, 
 % first is a that list, second is empty list.
 split_two([L],[L], []).
 % Do the actual work to split to two lists into two sections.
+% Use append() to give us two lists which would create the input list.
+% Then find the length of the two halves, If the length's differ by one or zero
+% then the list is reasonably split in half X and Y.
 split_two( IN, X, Y ):- append( X, Y, IN ),
                         length( X, LENX ), length( Y, LENY ), 
-                        ( 0 =:= LENY - LENX ; 1 =:= LENY - LENX ).
+                        ( 1 =:= abs( LENY - LENX ) ; 0 =:= LENY - LENX ).
 
 % Base cases, merge any empty list with a non
 % empty list by just returning the non empty.
@@ -62,7 +70,7 @@ btree_to_list( BT, L ) :-
 
 
 btree_depth( BT, D ) :- 
-btree_depth( BT, D ) :- btree_depth( BT, DR ), D is DR + 1;
+btree_depth( BT, D ) :- btree_depth( BT, DR ), D is DR + 1.
 
 btree_iso( BT1, BT2 ) :-
 
