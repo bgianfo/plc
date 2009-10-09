@@ -186,7 +186,7 @@ btree_to_list( node( LBT, E, RBT ), L ) :- btree_to_list( LBT, LL ),
 % ------------
 % Detect if the recursive btree_depth is a leaf, if so the depth is 0.
 
-btree_depth( leaf, N ) :- N is 0.
+btree_depth( leaf, 0 ). 
 
 % Description:
 % ------------
@@ -194,7 +194,7 @@ btree_depth( leaf, N ) :- N is 0.
 
 btree_depth( node( LBT, _, RBT ), N ) :- btree_depth( LBT, LN ),
                                          btree_depth( RBT, RN ),
-                                         N is LN + RN.
+                                         N is 1+(LN + RN).
 
 
 %
