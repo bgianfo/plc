@@ -86,7 +86,7 @@ int_mergesort( LS, FL ) :- split( LS, L1, L2 ),
 
 epsilon([]).
 
-atom( A ) :-
+atom( A ) :- A =:= [A].
 
 seq( REG1, REG2 ) :-
 
@@ -99,21 +99,38 @@ re_match( REGEX, ATOM, LST ) :-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-leaf( [] ).
+% Binary Tree functions.
+%
+% Conventions: 
+%
+%       - LBT: The left arm of a binary tree.
+%       - E: The element of a binary treee node. 
+%       - RBT: The right arm of a binary tree.
+%       - LEAF: synifies a leaf of the tree.
 
-node( leaf( [] ) 
-node( leaf( [] ) , E, BTR ).
 
-node( BTL, E, leaf( [] ) ).
+% Clause: btree_to_list
+%
+% Base case, if we have that leaf return a empty list baby!
+btree_to_list( LEAF, [] ). 
 
-node( node( LL, LE, LR ), E,  node( RL, RE, RR ) ).
-
-btree_to_list( BT, LS ) :- node(L, E, R) =:= BT, btree_to_list( L, H ), btree_to_list( R, T ), LS is [H|T]. 
+% Clause: btree_to_list
+%
+% Main clause to convert a Binary Tree to a list. 
+% We recursively traverse the left side of a tree until we get to a leaf. 
+% If we reach a leaf we append the node value to the lists all the way up 
+% to the root. We then append the left list to the root value. After the
+% traversal of the entire right side of the tree is complete, we append
+% The feft arm of the list 
+btree_to_list( node( LBT, E, RBT ), LS ) :- btree_to_list( LBT, LL ), 
+                                            btree_to_list( RBT, RL ), 
+                                            append( LL, [E], LLF),
+                                            append( LLF, RL, FLLS .
  
-btree_to_list( BT, LS ) :-
+% Detect if the recursive btree_depth is a leaf.
+btree_depth( leaf, N ) :- N is 0.
 
-% Detect if the recursive btree_depth is a end point, both arms are leaves.
-btree_depth( BT, N ) :- BT =:= node( leaf( [] ),X, leaf( [] ) ), N is 0.
+btree_depth( node(LBT, E, RBT), N ) :- 
 
 btree_depth( BT, N ) :- BT, btree_depth( BT, NR ), N is NR + 1.
 
