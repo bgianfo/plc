@@ -162,7 +162,18 @@ btree_to_list( node( LBT, E, RBT ), FLS ) :- btree_to_list( LBT, LL ),
                                              btree_to_list( RBT, RL ), 
                                              append( LL, [E], LLF),
                                              append( LLF, RL, FLS).
- 
+
+%
+% Tests:
+%
+% btree_to_list(node(node(node(leaf,9,leaf),20,leaf),30,node(node(leaf,99,leaf),33,node(leaf,1000,leaf))),L).
+% 
+% = [ 9, 20, 30, 99, 33, 1000 ]
+%
+
+
+
+
 % Clause: btree_depth
 %
 % Specification:
@@ -186,6 +197,15 @@ btree_depth( node( LBT, _, RBT ), N ) :- btree_depth( LBT, LN ),
                                          btree_depth( RBT, RN ),
                                          N is LN + RN.
 
+
+%
+% Tests: 
+%
+% btree_depth(node(node(node(leaf,9,leaf),20,leaf),30,node(node(leaf,99,leaf),33,node(leaf,1000,leaf))),N).
+%
+% = 3
+%
+
 % Clause: btree_iso
 %
 % Specification:
@@ -200,6 +220,7 @@ btree_depth( node( LBT, _, RBT ), N ) :- btree_depth( LBT, LN ),
 %
 % btree_iso( BT1, BT2 ) :-
 
+
 % Clause: btree_subtree
 %
 % Specification: 
@@ -212,5 +233,10 @@ btree_depth( node( LBT, _, RBT ), N ) :- btree_depth( LBT, LN ),
 % Description:
 % ------------
 
+btree_subtree( leaf, BT2 ).
 
-% btree_subtree( BT1, BT2 ) :-
+%
+% Description:
+% ------------
+
+% btree_subtree( node( LBT, E, RBT ), BT2 ) :-
