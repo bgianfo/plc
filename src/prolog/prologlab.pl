@@ -1,4 +1,3 @@
-
 % PLC Lab #2 
 % Author: Brian Gianforcaro 
 % Tested and developed GNU Prolog v1.3.1
@@ -6,69 +5,79 @@
 
 % Clause: split_two
 %
+% Specification:
+% -------------
+% Split any two lists apart as equally as possible.
+%
 % Description:
 % ------------
 % Split base case, can't split an empty list.
+
 split_two( [], [], [] ).
 
-% Clause: split_two
-%
 % Description:
 % ------------
 % Split a list with a single element, 
 % first is a that list, second is empty list.
 
-split_two( [L], [L], [] ).
+split_two( [L], [], [L] ).
 
-% Clause: split_two
-%
 % Description:
 % ------------
 % Do the actual work to split to two lists into two sections.
 % Use append() to give us two lists which would create the input list.
 % Then find the length of the two halves, If the length's differ by one or zero
-% then the list is reasonably split in half X and Y.
+% then the list is reasonably split in half X and Y. Cut after we get the first result.
 
-split_two( [IN], [X], [Y] ):- append( X, Y, IN ),
-                              length( X, LENX ), length( Y, LENY ),
-                              ( 1 =:= abs( LENY - LENX ) ; 0 =:= LENY - LENX ).
+split_two( IN, X, Y ):- append( X, Y, IN ),
+                        length( X, LENX ), length( Y, LENY ),
+                        ( 1 =:= abs( LENY - LENX ) ; 0 =:= LENY - LENX ), !.
 
 % Clause: merge_two
+%
+% Specification:
+% --------------
+% Merge two small seperate lists togeather, in smallest to largest ordering.
 %
 % Description: 
 % ------------
 % Base cases, merge any empty list with a non
-% empty list by just returning the non empty.
+% empty list by just returning the non empty list. 
+% Easy peasy.
 
-merge_two( [], [L], [L] ).
+merge_two( [], L, L ).
 
 % Description:
 % ------------
 % Reverse base cases of the above, merge any
 % empty list with a non empty list by just returning the non empty.
 
-merge_two( [L], [], [L] ).
+merge_two( L, [], L ).
 
 % Description:
 % ------------
 % If the Head of list one is less than or equal to the head of list two, 
-% recursively   merge the tail of list one with the entirety of list two. 
+% recursively merge the tail of list one with the entirety of list two. 
+% Combining head of list one with the resultant merged lists.
 
-merge_two( [HL1|TL1], [HL2,TL2], [HL1|MERGED] ) :- HL1 =< HL2,
-                                                   merge_two( TL1, [HL2|TL2], MERGED ).
+merge_two( [H1 | T1], [H2 | T2], [H1 | MERG] ):- H1 =< H2, 
+                                              merge_two( T1, [H2 | T2], MERG).
 
 % Description:
 % ------------
 % If the Head of list one is greater than the head of list two, 
-% recursively  merge list one with the tail of list two. 
+% recursively merge the entirety of list one with the tail of list two. 
+% Finally combine The head of list two with the resultant merged lists.
 
-merge_two( [HL1|TL1], [HL2,TL2], [HL2|MERGED] ) :- HL1 > HL2, 
-                                                   merge_two( [HL1|TL1], TL2, MERGED ).
+merge_two( [H1 | T1], [H2 | T2], [H2 | MERG] ):- H1 > H2, 
+                                              merge_two( [H1 | T1], T2, MERG).
 
-% Clause: int_mergesort %
+% Clause: int_mergesort
 %
 % Specification:
 % --------------
+% Split the list in half recursively, once at the lowest point merge back each
+% part in smallest to largest order. Finally combining both of the original halves.
 % 
 % Description:
 % ------------
@@ -86,10 +95,21 @@ int_mergesort( [ONE], [ONE] ).
 % ------------
 % Run the actual merge sort, LS is the input list, FL is the final sorted list.
 
-int_mergesort( [LS], [FL] ) :- split_two( LS, L1, L2 ),
-                               int_mergesort( L1, SORTED1 ),
-                               int_mergesort( L2, SORTED2 ),
-                               merge_two( SORTED1, SORTED2, FL ).
+int_mergesort( [ONE,TWO | TAIL], FL ) :- split_two( [ONE,TWO | TAIL], L1, L2 ),
+                                         int_mergesort( L1, SORTED1 ),
+                                         int_mergesort( L2, SORTED2 ),
+                                         merge_two( SORTED1, SORTED2, FL ),!.
+
+% Some of my test cases:
+%
+% int_mergesort( [5,4,3,2,1], L ).
+%
+% int_mergesort( [1,2,3,5,2], L ).
+%
+% int_mergesort( [9,8,6,5,3,2], L ).
+%
+% int_mergesort( [1,2,3], L ).
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
