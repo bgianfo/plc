@@ -88,13 +88,13 @@ epsilon([]).
 
 atom( A ) :- A =:= [A].
 
-seq( REG1, REG2 ) :-
+seq( RE1, RE2 ) :-
 
-alt( REG1, REG2 ) :-
+alt( RE1, RE2 ) :-
 
-star( REGEX, [L] ) :-
+star( RE, [L] ) :-
 
-re_match( REGEX, ATOM, LST ) :-
+re_match( RE, ATOM, LST ) :-
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -104,9 +104,9 @@ re_match( REGEX, ATOM, LST ) :-
 % Conventions: 
 %
 %       - LBT: The left arm of a binary tree.
-%       - E: The element of a binary treee node. 
+%       - E: The element of a binary tree node. 
 %       - RBT: The right arm of a binary tree.
-%       - LEAF: synifies a leaf of the tree.
+%       - LEAF: signifies a leaf of the tree.
 
 
 % Clause: btree_to_list
@@ -116,23 +116,29 @@ btree_to_list( LEAF, [] ).
 
 % Clause: btree_to_list
 %
-% Main clause to convert a Binary Tree to a list. 
-% We recursively traverse the left side of a tree until we get to a leaf. 
-% If we reach a leaf we append the node value to the lists all the way up 
+% Main clause to convert a Binary Tree to a list.
+% We recursively traverse the left side of a tree until we get to a leaf.
+% If we reach a leaf we append the node value to the lists all the way up
 % to the root. We then append the left list to the root value. After the
 % traversal of the entire right side of the tree is complete, we append
-% The feft arm of the list 
+% to the head element the left arm of the list. The right side is then
+% appended to the result of the previous append. This gives us the final list.
 btree_to_list( node( LBT, E, RBT ), LS ) :- btree_to_list( LBT, LL ), 
                                             btree_to_list( RBT, RL ), 
                                             append( LL, [E], LLF),
                                             append( LLF, RL, FLLS .
  
-% Detect if the recursive btree_depth is a leaf.
+% Clause: btree_depth
+%
+% Detect if the recursive btree_depth is a leaf, if so the depth is 0.
 btree_depth( leaf, N ) :- N is 0.
 
-btree_depth( node(LBT, E, RBT), N ) :- 
-
-btree_depth( BT, N ) :- BT, btree_depth( BT, NR ), N is NR + 1.
+% Clause: btree_depth
+%
+% Traverse the left branch, traverse the right and add the total together.
+btree_depth( node( LBT, E, RBT ), N ) :- btree_depth( LBT, LN ),
+                                         btree_depth( RBT, RN ),
+                                         N is LN + RN.
 
 btree_iso( BT1, BT2 ) :-
 
