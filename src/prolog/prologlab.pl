@@ -86,15 +86,15 @@ int_mergesort( LS, FL ) :- split( LS, L1, L2 ),
 
 epsilon([]).
 
-atom( A ) :- A =:= [A].
+%atom( A ) :- A =:= [A].
 
-seq( RE1, RE2 ) :-
+% seq( RE1, RE2 ) :-
 
-alt( RE1, RE2 ) :-
+% alt( RE1, RE2 ) :-
 
-star( RE, [L] ) :-
+%star( RE, [L] ) :-
 
-re_match( RE, ATOM, LST ) :-
+% re_match( RE, ATOM, LST ) :-
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -112,7 +112,7 @@ re_match( RE, ATOM, LST ) :-
 % Clause: btree_to_list
 %
 % Base case, if we have that leaf return a empty list baby!
-btree_to_list( LEAF, [] ). 
+btree_to_list( leaf, [] ). 
 
 % Clause: btree_to_list
 %
@@ -123,10 +123,10 @@ btree_to_list( LEAF, [] ).
 % traversal of the entire right side of the tree is complete, we append
 % to the head element the left arm of the list. The right side is then
 % appended to the result of the previous append. This gives us the final list.
-btree_to_list( node( LBT, E, RBT ), LS ) :- btree_to_list( LBT, LL ), 
-                                            btree_to_list( RBT, RL ), 
-                                            append( LL, [E], LLF),
-                                            append( LLF, RL, FLLS .
+btree_to_list( node( LBT, E, RBT ), FLS ) :- btree_to_list( LBT, LL ), 
+                                             btree_to_list( RBT, RL ), 
+                                             append( LL, [E], LLF),
+                                             append( LLF, RL, FLS).
  
 % Clause: btree_depth
 %
@@ -136,12 +136,10 @@ btree_depth( leaf, N ) :- N is 0.
 % Clause: btree_depth
 %
 % Traverse the left branch, traverse the right and add the total together.
-btree_depth( node( LBT, E, RBT ), N ) :- btree_depth( LBT, LN ),
+btree_depth( node( LBT, _, RBT ), N ) :- btree_depth( LBT, LN ),
                                          btree_depth( RBT, RN ),
                                          N is LN + RN.
 
-btree_iso( BT1, BT2 ) :-
+% btree_iso( BT1, BT2 ) :-
 
-btree_subtree( BT1, BT2 ) :-
-  
-
+% btree_subtree( BT1, BT2 ) :-
