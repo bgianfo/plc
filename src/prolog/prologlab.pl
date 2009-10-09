@@ -61,7 +61,7 @@ merge_two( L, [], L ).
 % Combining head of list one with the resultant merged lists.
 
 merge_two( [H1 | T1], [H2 | T2], [H1 | MERG] ):- H1 =< H2, 
-                                              merge_two( T1, [H2 | T2], MERG).
+                                                 merge_two( T1, [H2 | T2], MERG).
 
 % Description:
 % ------------
@@ -70,7 +70,7 @@ merge_two( [H1 | T1], [H2 | T2], [H1 | MERG] ):- H1 =< H2,
 % Finally combine The head of list two with the resultant merged lists.
 
 merge_two( [H1 | T1], [H2 | T2], [H2 | MERG] ):- H1 > H2, 
-                                              merge_two( [H1 | T1], T2, MERG).
+                                                 merge_two( [H1 | T1], T2, MERG).
 
 % Clause: int_mergesort
 %
@@ -95,7 +95,7 @@ int_mergesort( [ONE], [ONE] ).
 % ------------
 % Run the actual merge sort, LS is the input list, FL is the final sorted list.
 
-int_mergesort( [ONE,TWO | TAIL], FL ) :- split_two( [ONE,TWO | TAIL], L1, L2 ),
+int_mergesort( [ONE, TWO | TAIL], FL ) :- split_two( [ONE, TWO | TAIL], L1, L2 ),
                                          int_mergesort( L1, SORTED1 ),
                                          int_mergesort( L2, SORTED2 ),
                                          merge_two( SORTED1, SORTED2, FL ),!.
@@ -162,7 +162,6 @@ btree_to_list( node( LBT, E, RBT ), FLS ) :- btree_to_list( LBT, LL ),
                                              btree_to_list( RBT, RL ), 
                                              append( LL, [E], LLF),
                                              append( LLF, RL, FLS).
-
 %
 % Tests:
 %
@@ -170,9 +169,6 @@ btree_to_list( node( LBT, E, RBT ), FLS ) :- btree_to_list( LBT, LL ),
 % 
 % = [ 9, 20, 30, 99, 33, 1000 ]
 %
-
-
-
 
 % Clause: btree_depth
 %
@@ -233,7 +229,7 @@ btree_depth( node( LBT, _, RBT ), N ) :- btree_depth( LBT, LN ),
 % Description:
 % ------------
 
-btree_subtree( leaf, BT2 ).
+btree_subtree( leaf, leaf ).
 
 %
 % Description:
