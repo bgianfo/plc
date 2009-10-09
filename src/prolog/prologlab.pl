@@ -158,10 +158,10 @@ btree_to_list( leaf, [] ).
 % to the head element the left arm of the list. The right side is then
 % appended to the result of the previous append. This gives us the final list.
 
-btree_to_list( node( LBT, E, RBT ), FLS ) :- btree_to_list( LBT, LL ), 
-                                             btree_to_list( RBT, RL ), 
-                                             append( LL, [E], LLF),
-                                             append( LLF, RL, FLS).
+btree_to_list( node( LBT, E, RBT ), L ) :- btree_to_list( LBT, LL ), 
+					   btree_to_list( RBT, RL ), 
+					   append( LL, [E], LF ),
+					   append( LF, RL, L ).
 
 %
 % Tests:
@@ -169,6 +169,8 @@ btree_to_list( node( LBT, E, RBT ), FLS ) :- btree_to_list( LBT, LL ),
 % btree_to_list(node(node(node(leaf,9,leaf),20,leaf),30,node(node(leaf,99,leaf),33,node(leaf,1000,leaf))),L).
 % 
 % = [ 9, 20, 30, 99, 33, 1000 ]
+%
+% btree_to_list(node(node(leaf,2,leaf),20,node(leaf,50,leaf)), N).
 %
 
 
@@ -233,7 +235,7 @@ btree_depth( node( LBT, _, RBT ), N ) :- btree_depth( LBT, LN ),
 % Description:
 % ------------
 
-btree_subtree( leaf, BT2 ).
+%btree_subtree( leaf, BT2 ).
 
 %
 % Description:
