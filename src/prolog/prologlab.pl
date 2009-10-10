@@ -191,11 +191,19 @@ btree_depth( leaf, 0 ).
 % Description:
 % ------------
 % Traverse the left branch, traverse the right and add the total together.
+% If the right count is larger than the left, add one to the right and return N.
 
 btree_depth( node( LBT, _, RBT ), N ) :- btree_depth( LBT, LN ),
                                          btree_depth( RBT, RN ),
-                                         N is 1+(LN + RN).
+										 RN >= LN, N is (1+RN).
+% Description:
+% ------------
+% Traverse the left branch, traverse the right branch.
+% If the left count is larger than the right, add one to the left and return N.
 
+btree_depth( node( LBT, _, RBT ), N ) :- btree_depth( LBT, LN ),
+                                         btree_depth( RBT, RN ),
+										 LN >= RN, N is (1+LN).
 
 %
 % Tests: 
