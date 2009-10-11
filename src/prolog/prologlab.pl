@@ -171,16 +171,29 @@ re_match( epsilon, LST ) :- LST == [].
 
 re_match( atom( A ), LST ) :- LST == [A].
 
-re_match( star( RE ), [HL|TL] ) :- [HL|TL] == [],
-                                   re_match( RE, HL ),
-                                   re_match( RE, TL ).
+re_match( star( RE ), [] ).
 
-re_match( alt( RE1, RE2 ), LST ) :- re_match( RE1, LST );
-                                    re_match( RE2, LST ).
+re_match( star( RE ), [HL|TL] ) :- re_match( RE, [HL|TL] ),!.
+
+re_match( star( RE ), [HL|TL] ) :- re_match( star(RE), HL ),
+                                   re_match( star(RE), TL ),!.
+
+re_match( alt( RE1, RE2 ), LST ) :- ( re_match( RE1, LST ) ; re_match( RE2, LST ) ).
 
 re_match( seq( RE1, RE2 ), [H|T] ) :- re_match( RE1, H ),
                                       re_match( RE2, T ).
 
+tw(A) :- write(A),nl,fail.
+test_re :- ( re_match(alt(atom(a),star(atom(b))),[a]);           tw('Fail #1') ),!,
+           ( (\+ re_match(alt(atom(a),star(atom(b))),[a,b])   ); tw('Fail #2') ),!,
+           ( (\+ re_match(alt(atom(a),star(atom(b))),[a,b,b]) ); tw('Fail #3') ),!,
+           ( (\+ re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[]));  tw( 'Fail #4')),!,
+           ( (\+ re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[b])); tw( 'Fail #5')),!,
+           ( (\+ re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[a,b,b,c,c])); tw('Fail #6')),!,
+           ( re_match(alt(atom(a),star(atom(b))),[a]);           tw('Fail #7') ),!,
+           ( re_match(alt( atom(a), star( atom(b) ) ), [] );            tw('Fail #8') ),!,
+           ( re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[a,b]); tw('Fail #9') ),!,
+           ( re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[a]);   tw('Fail #10') ),!.
 
 % Test Cases:
 %
@@ -203,22 +216,15 @@ re_match( seq( RE1, RE2 ), [H|T] ) :- re_match( RE1, H ),
 %
 %       ?- re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[a,b,b,c,c]).
 %       false.
-
-%
-%   Fail:
-%
-%       ?- re_match(alt(atom(a),star(atom(b))),[]).
-%       true.
-%
-%       (true/false)
+% -
 %       ?- re_match(alt(atom(a),star(atom(b))),[a]).
 %       true.
 %
-%       ?- re_match(alt(atom(a),star(atom(b))),[b]).
-%       true.
+%       ?- re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[a,b]).
+%       true .
+
 %
-%       ?- re_match(alt(atom(a),star(atom(b))),[b,b]).
-%       true.
+%   Fail:
 %
 %       ?- re_match(alt(atom(a),star(atom(b))),[b,b|Z]).
 %       Z = [] ;
@@ -228,11 +234,10 @@ re_match( seq( RE1, RE2 ), [H|T] ) :- re_match( RE1, H ),
 %       Z = [b, b, b, b] ;
 %       Z = [b, b, b, b, b] .
 %
+%       ?- re_match(alt(atom(a),star(atom(b))),[]).
+%       true.
 %
 %       ?- re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[a]).
-%       true .
-%
-%       ?- re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[a,b]).
 %       true .
 %
 %       ?- re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[a,b,b]).
