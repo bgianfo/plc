@@ -115,17 +115,79 @@ int_mergesort( [ONE, TWO | TAIL], FL ) :- split_two( [ONE, TWO | TAIL], L1, L2 )
 
 % Regular Expression Operations
 
-epsilon([]).
+% Conventions:
+%
+%
+%  epsilon:
+%  --------
+%  (Data Structure) epsilon represents the regular expression that matches
+%  the empty list.
+%
+%  atom( A ):
+%  ----------
+%  (Data Structure) Represents the regular expression that matches the
+%  singleton list containing the atom A.
+%
 
-%atom( A ) :- A =:= [A].
 
-% seq( RE1, RE2 ) :-
+% Clause: seq
+%
+% Specification:
+% --------------
+% (Data Structure) Represents the regular expression that matches any list that
+% can split into two lists (such that appending the two lists yields the
+% original list) where the regular expression RE1  matches the first list
+% and the regular expression RE2  matches the second list.
+%
+% Description:
+% ------------
 
-% alt( RE1, RE2 ) :-
+seq( RE1, RE2 ) :-
 
-%star( RE, [L] ) :-
+% Clause: alt
+%
+% Specification:
+% --------------
+% (Data Structure) Represents the regular expression that matches any list where
+% the regular expression RE1  matches the list or the regular expression RE2
+% matches the list.
+%
+% Description:
+% ------------
 
-% re_match( RE, ATOM, LST ) :-
+alt( RE1, RE2 ) :-
+
+% Clause: star
+%
+% Specification:
+% --------------
+% (Data Structure) Represents the regular expression that matches the empty
+% list and matches any list that can be split into one or more lists (such
+% that concatenating the lists yields the original list) where the regular
+% expression RE matches % each list.
+%
+% Description:
+% ------------
+
+star( RE ) :- RE =:= []; RE =:= [RE].
+
+% Clause: re_match
+%
+% Specification:
+% --------------
+% (Predicate) Satisfied when the first regular-expression parameter matches the
+% second atom-list parameter. The first parameter may be assumed to always be
+% instantiated with a ground term when re_match  is used in a top-level goal;
+% the second parameter will likely (but need not) be instantiated with a ground
+% term when re_match is used in a top-level goal.
+%
+% Description:
+% ------------
+%
+re_match( RE, LST ) :- re_match_aux( RE, LST ).
+
+% re_match_aux( RE, L, LS ) :- re_match(
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -224,6 +286,7 @@ btree_depth( node( LBT, _, RBT ), N ) :- btree_depth( LBT, LN ),
 %
 % Description:
 % ------------
+% Base case for the binary tree iso morphism predicate.
 btree_iso( leaf, leaf ).
 
 % Description:
@@ -234,6 +297,8 @@ btree_iso( node( BTL1, X, BTR1 ), node( BTL2, X, BTR2 ) ) :- btree_iso( BTL1, BT
 % ------------
 btree_iso( node( BTL1, X, BTR1 ), node( BTL2, X, BTR2 ) ) :- btree_iso( BTL1, BTR2 ),
                                                              btree_iso( BTR1, BTL2 ).
+
+
 
 % Test cases:
 %
