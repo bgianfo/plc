@@ -240,10 +240,20 @@ btree_depth( node( LBT, _, RBT ), N ) :- btree_depth( LBT, LN ),
 % Description:
 % ------------
 
-%btree_subtree( leaf, BT2 ).
+btree_subtree( leaf, false ).
 
 %
 % Description:
 % ------------
 
-% btree_subtree( node( LBT, E, RBT ), BT2 ) :-
+btree_subtree( node( TL, _, TR ), node( STL, SE, STR ) ):- btree_subtree( TL, node( STL, SE, STR ) ) ;
+                                                           btree_subtree( TR, node( STL, SE, STR ) ) ;
+                                                           TL  == node( STL, SE, STR ) ;
+                                                           TR  == node( STL, SE, STR ).
+
+
+
+
+% Test cases:
+%
+% btree_subtree(node(node(node(leaf,9,leaf),20,leaf),30,node(node(leaf,99,leaf),33,node(leaf,1000,leaf))),node(leaf,9,leaf)).
