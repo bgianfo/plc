@@ -1,5 +1,5 @@
-% PLC Lab #2 
-% Author: Brian Gianforcaro 
+% PLC Lab #2
+% Author: Brian Gianforcaro
 % Tested and developed GNU Prolog v1.3.1 & SWI-PL v5.6.62
 
 
@@ -17,7 +17,7 @@ split_two( [], [], [] ).
 
 % Description:
 % ------------
-% Split a list with a single element, 
+% Split a list with a single element,
 % first is a that list, second is empty list.
 
 split_two( [L], [], [L] ).
@@ -39,10 +39,10 @@ split_two( IN, X, Y ):- append( X, Y, IN ),
 % --------------
 % Merge two small seperate lists togeather, in smallest to largest ordering.
 %
-% Description: 
+% Description:
 % ------------
 % Base cases, merge any empty list with a non
-% empty list by just returning the non empty list. 
+% empty list by just returning the non empty list.
 % Easy peasy.
 
 merge_two( [], L, L ).
@@ -56,20 +56,20 @@ merge_two( L, [], L ).
 
 % Description:
 % ------------
-% If the Head of list one is less than or equal to the head of list two, 
-% recursively merge the tail of list one with the entirety of list two. 
+% If the Head of list one is less than or equal to the head of list two,
+% recursively merge the tail of list one with the entirety of list two.
 % Combining head of list one with the resultant merged lists.
 
-merge_two( [H1 | T1], [H2 | T2], [H1 | MERG] ):- H1 =< H2, 
+merge_two( [H1 | T1], [H2 | T2], [H1 | MERG] ):- H1 =< H2,
                                                  merge_two( T1, [H2 | T2], MERG).
 
 % Description:
 % ------------
-% If the Head of list one is greater than the head of list two, 
-% recursively merge the entirety of list one with the tail of list two. 
+% If the Head of list one is greater than the head of list two,
+% recursively merge the entirety of list one with the tail of list two.
 % Finally combine The head of list two with the resultant merged lists.
 
-merge_two( [H1 | T1], [H2 | T2], [H2 | MERG] ):- H1 > H2, 
+merge_two( [H1 | T1], [H2 | T2], [H2 | MERG] ):- H1 > H2,
                                                  merge_two( [H1 | T1], T2, MERG).
 
 % Clause: int_mergesort
@@ -78,7 +78,7 @@ merge_two( [H1 | T1], [H2 | T2], [H2 | MERG] ):- H1 > H2,
 % --------------
 % Split the list in half recursively, once at the lowest point merge back each
 % part in smallest to largest order. Finally combining both of the original halves.
-% 
+%
 % Description:
 % ------------
 % Merge sort base case #2 when we have a empty list, return empty.
@@ -132,10 +132,10 @@ epsilon([]).
 
 % Binary Tree functions.
 %
-% Conventions: 
+% Conventions:
 %
 %       - LBT: The left arm of a binary tree.
-%       - E: The element of a binary tree node. 
+%       - E: The element of a binary tree node.
 %       - RBT: The right arm of a binary tree.
 %       - LEAF: signifies a leaf of the tree.
 
@@ -148,7 +148,7 @@ epsilon([]).
 
 btree_to_list( leaf, [] ).
 
-% Description: 
+% Description:
 % ------------
 % Main clause to convert a Binary Tree to a list.
 % We recursively traverse the left side of a tree until we get to a leaf.
@@ -158,8 +158,8 @@ btree_to_list( leaf, [] ).
 % to the head element the left arm of the list. The right side is then
 % appended to the result of the previous append. This gives us the final list.
 
-btree_to_list( node( LBT, E, RBT ), L ) :- btree_to_list( LBT, LL ), 
-                                           btree_to_list( RBT, RL ), 
+btree_to_list( node( LBT, E, RBT ), L ) :- btree_to_list( LBT, LL ),
+                                           btree_to_list( RBT, RL ),
                                            append( LL, [E], LF ),
                                            append( LF, RL, L ).
 
@@ -167,7 +167,7 @@ btree_to_list( node( LBT, E, RBT ), L ) :- btree_to_list( LBT, LL ),
 % Tests:
 %
 % btree_to_list(node(node(node(leaf,9,leaf),20,leaf),30,node(node(leaf,99,leaf),33,node(leaf,1000,leaf))),L).
-% 
+%
 % = [ 9, 20, 30, 99, 33, 1000 ]
 %
 % btree_to_list(node(node(leaf,2,leaf),20,node(leaf,50,leaf)), N).
@@ -177,7 +177,7 @@ btree_to_list( node( LBT, E, RBT ), L ) :- btree_to_list( LBT, LL ),
 %
 % Specification:
 % --------------
-% Satisfied when the second integer parameter corresponds to the depth of 
+% Satisfied when the second integer parameter corresponds to the depth of
 % the first binary-tree parameter. A leaf binary tree has depth zero, while
 % a node binary tree has depth one greater than the maximum of the depths of
 % its immediate sub-trees.
@@ -186,7 +186,7 @@ btree_to_list( node( LBT, E, RBT ), L ) :- btree_to_list( LBT, LL ),
 % ------------
 % Detect if the recursive btree_depth is a leaf, if so the depth is 0.
 
-btree_depth( leaf, 0 ). 
+btree_depth( leaf, 0 ).
 
 % Description:
 % ------------
@@ -206,7 +206,7 @@ btree_depth( node( LBT, _, RBT ), N ) :- btree_depth( LBT, LN ),
                                          LN >= RN, N is (1+LN).
 
 %
-% Tests: 
+% Tests:
 %
 % btree_depth(node(node(node(leaf,9,leaf),20,leaf),30,node(node(leaf,99,leaf),33,node(leaf,1000,leaf))),N).
 %
@@ -217,7 +217,7 @@ btree_depth( node( LBT, _, RBT ), N ) :- btree_depth( LBT, LN ),
 %
 % Specification:
 % --------------
-% Satisfied when the two binary-tree parameters are isomorphic. Two binary 
+% Satisfied when the two binary-tree parameters are isomorphic. Two binary
 % trees are isomorphic if one can be derived from the other by changing the
 % order of the branches. Either of the parameters may be instantiated with a
 % variable when btree_iso is used in a top-level goal.
@@ -230,11 +230,11 @@ btree_depth( node( LBT, _, RBT ), N ) :- btree_depth( LBT, LN ),
 
 % Clause: btree_subtree
 %
-% Specification: 
+% Specification:
 % --------------
-% Satisfied when the second binary-tree parameter is a sub-tree 
-% (not necessarily an immediate sub-tree) of the first binary-tree parameter. 
-% Either of the parameters may be instantiated with a variable when 
+% Satisfied when the second binary-tree parameter is a sub-tree
+% (not necessarily an immediate sub-tree) of the first binary-tree parameter.
+% Either of the parameters may be instantiated with a variable when
 % btree_subtree is used in a top-level goal.
 %
 % Description:
