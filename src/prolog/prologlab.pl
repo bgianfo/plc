@@ -171,7 +171,7 @@ re_match( epsilon, LST ) :- LST == [].
 
 re_match( atom( A ), LST ) :- LST == [A].
 
-re_match( star( RE ), [] ).
+re_match( star( _ ), [] ).
 
 re_match( star( RE ), [HL|TL] ) :- re_match( RE, [HL|TL] ),!.
 
@@ -184,16 +184,16 @@ re_match( seq( RE1, RE2 ), [H|T] ) :- re_match( RE1, H ),
                                       re_match( RE2, T ).
 
 tw(A) :- write(A),nl,fail.
-test_re :- ( re_match(alt(atom(a),star(atom(b))),[a]);           tw('Fail #1') ),!,
-           ( (\+ re_match(alt(atom(a),star(atom(b))),[a,b])   ); tw('Fail #2') ),!,
-           ( (\+ re_match(alt(atom(a),star(atom(b))),[a,b,b]) ); tw('Fail #3') ),!,
-           ( (\+ re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[]));  tw( 'Fail #4')),!,
-           ( (\+ re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[b])); tw( 'Fail #5')),!,
-           ( (\+ re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[a,b,b,c,c])); tw('Fail #6')),!,
-           ( re_match(alt(atom(a),star(atom(b))),[a]);           tw('Fail #7') ),!,
-           ( re_match(alt( atom(a), star( atom(b) ) ), [] );            tw('Fail #8') ),!,
-           ( re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[a,b]); tw('Fail #9') ),!,
-           ( re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[a]);   tw('Fail #10') ),!.
+test_re(1) :- ( re_match(alt(atom(a),star(atom(b))),[a]);                                tw('Fail #1') ),!,
+              ( (\+ re_match(alt(atom(a),star(atom(b))),[a,b])   );                      tw('Fail #2') ),!,
+              ( (\+ re_match(alt(atom(a),star(atom(b))),[a,b,b]) );                      tw('Fail #3') ),!,
+              ( (\+ re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[]));  tw('Fail #4')),!,
+              ( (\+ re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[b])); tw('Fail #5')),!,
+              ( (\+ re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[a,b,b,c,c])); tw('Fail #6')),!,
+              ( re_match(alt(atom(a),star(atom(b))),[a]);                                tw('Fail #7') ),!,
+              ( re_match(alt( atom(a), star( atom(b) ) ), [] );                          tw('Fail #8') ),!,
+              ( re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[a,b]);    tw('Fail #9') ),!,
+              ( re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[a]);      tw('Fail #10') ),!.
 
 % Test Cases:
 %
