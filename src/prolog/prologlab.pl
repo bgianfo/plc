@@ -224,8 +224,29 @@ btree_depth( node( LBT, _, RBT ), N ) :- btree_depth( LBT, LN ),
 %
 % Description:
 % ------------
+btree_iso( leaf, leaf ).
+
+% Description:
+% ------------
+btree_iso( node( BTL1, X, BTR1 ), node( BTL2, X, BTR2 ) ) :- btree_iso( BTL1, BTL2 ),
+                                                             btree_iso( BTR1, BTR2 ).
+% Description:
+% ------------
+btree_iso( node( BTL1, X, BTR1 ), node( BTL2, X, BTR2 ) ) :- btree_iso( BTL1, BTR2 ),
+                                                             btree_iso( BTR1, BTL2 ).
+
+% Test cases:
 %
-% btree_iso( BT1, BT2 ) :-
+%   Pass:
+%
+%      - btree_iso(node(node(leaf,3,leaf),3,node(leaf,3,leaf)),BT).
+%      - btree_iso(node(node(node(leaf,9,leaf),20,leaf),30,node(node(leaf,99,leaf),33,node(leaf,1000,leaf))),node(node(node(leaf,99,leaf),33,node(leaf,1000,leaf)),30,node(leaf,20,node(leaf,9,leaf)))).
+%      - btree_iso(node(node(node(leaf,9,leaf),20,leaf),30,node(node(leaf,99,leaf),33,node(leaf,1000,leaf))),leaf).
+%
+%   Fail:
+%      - btree_iso(node(node(leaf,3,leaf),3,node(leaf,5,leaf)),BT).
+%      - btree_iso(node(node(node(leaf,9,leaf),20,leaf),30,node(node(leaf,99,leaf),33,node(leaf,1000,leaf))),BT).
+
 
 
 % Clause: btree_subtree
