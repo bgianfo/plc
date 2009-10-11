@@ -190,6 +190,66 @@ re_match( RE, LST ) :- re_match_aux( RE, LST ).
 
 
 
+% Test Cases:
+%
+%   ?- re_match(alt(atom(a),star(atom(b))),[]).
+%   true .
+%
+%   ?- re_match(alt(atom(a),star(atom(b))),[a]).
+%   true .
+%
+%   ?- re_match(alt(atom(a),star(atom(b))),[a,b]).
+%   false.
+%
+%   ?- re_match(alt(atom(a),star(atom(b))),[a,b,b]).
+%   false.
+%
+%   ?- re_match(alt(atom(a),star(atom(b))),[b]).
+%   true .
+%
+%   ?- re_match(alt(atom(a),star(atom(b))),[b,b]).
+%   true .
+%
+%   ?- re_match(alt(atom(a),star(atom(b))),[b,b|Z]).
+%   Z = [] ;
+%   Z = [b] ;
+%   Z = [b, b] ;
+%   Z = [b, b, b] ;
+%   Z = [b, b, b, b] ;
+%   Z = [b, b, b, b, b] .
+%
+%   ?- re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[]).
+%   false.
+%
+%   ?- re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[a]).
+%   true .
+%
+%   ?- re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[b]).
+%   false.
+%
+%   ?- re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[a,b]).
+%   true .
+%
+%   ?- re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[a,b,b]).
+%   true .
+%
+%   ?- re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[a,b,b,c]).
+%   true .
+%
+%   ?- re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[a,b,b,c,c]).
+%   false.
+%
+%   ?- re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[a,b|Z]).
+%   Z = [c] ;
+%   Z = [] ;
+%   Z = [b, c] ;
+%   Z = [b] ;
+%   Z = [b, b, c] ;
+%   Z = [b, b] ;
+%   Z = [b, b, b, c] ;
+%   Z = [b, b, b] ;
+%   Z = [b, b, b, b, c] .
+%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Binary Tree functions.
@@ -309,6 +369,7 @@ btree_iso( node( BTL1, X, BTR1 ), node( BTL2, X, BTR2 ) ) :- btree_iso( BTL1, BT
 %      - btree_iso(node(node(node(leaf,9,leaf),20,leaf),30,node(node(leaf,99,leaf),33,node(leaf,1000,leaf))),leaf).
 %
 %   Fail:
+%
 %      - btree_iso(node(node(leaf,3,leaf),3,node(leaf,5,leaf)),BT).
 %      - btree_iso(node(node(node(leaf,9,leaf),20,leaf),30,node(node(leaf,99,leaf),33,node(leaf,1000,leaf))),BT).
 
@@ -336,10 +397,6 @@ btree_subtree( node( TL, _, TR ), node( STL, SE, STR ) ):- btree_subtree( TL, no
                                                            btree_subtree( TR, node( STL, SE, STR ) ) ;
                                                            TL  == node( STL, SE, STR ) ;
                                                            TR  == node( STL, SE, STR ).
-
-
-
-
 % Test cases:
 %
-% btree_subtree(node(node(node(leaf,9,leaf),20,leaf),30,node(node(leaf,99,leaf),33,node(leaf,1000,leaf))),node(leaf,9,leaf)).
+%  - btree_subtree(node(node(node(leaf,9,leaf),20,leaf),30,node(node(leaf,99,leaf),33,node(leaf,1000,leaf))),node(leaf,9,leaf)).
