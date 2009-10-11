@@ -1,6 +1,6 @@
 % PLC Lab #2 
 % Author: Brian Gianforcaro 
-% Tested and developed GNU Prolog v1.3.1
+% Tested and developed GNU Prolog v1.3.1 & SWI-PL v5.6.62
 
 
 % Clause: split_two
@@ -96,9 +96,9 @@ int_mergesort( [ONE], [ONE] ).
 % Run the actual merge sort, LS is the input list, FL is the final sorted list.
 
 int_mergesort( [ONE, TWO | TAIL], FL ) :- split_two( [ONE, TWO | TAIL], L1, L2 ),
-                                         int_mergesort( L1, SORTED1 ),
-                                         int_mergesort( L2, SORTED2 ),
-                                         merge_two( SORTED1, SORTED2, FL ),!.
+                                          int_mergesort( L1, SORTED1 ),
+                                          int_mergesort( L2, SORTED2 ),
+                                          merge_two( SORTED1, SORTED2, FL ),!.
 
 % Some of my test cases:
 %
@@ -159,9 +159,9 @@ btree_to_list( leaf, [] ).
 % appended to the result of the previous append. This gives us the final list.
 
 btree_to_list( node( LBT, E, RBT ), L ) :- btree_to_list( LBT, LL ), 
-					   btree_to_list( RBT, RL ), 
-					   append( LL, [E], LF ),
-					   append( LF, RL, L ).
+                                           btree_to_list( RBT, RL ), 
+                                           append( LL, [E], LF ),
+                                           append( LF, RL, L ).
 
 %
 % Tests:
@@ -195,7 +195,7 @@ btree_depth( leaf, 0 ).
 
 btree_depth( node( LBT, _, RBT ), N ) :- btree_depth( LBT, LN ),
                                          btree_depth( RBT, RN ),
-										 RN >= LN, N is (1+RN).
+                                         RN >= LN, N is (1+RN).
 % Description:
 % ------------
 % Traverse the left branch, traverse the right branch.
@@ -203,7 +203,7 @@ btree_depth( node( LBT, _, RBT ), N ) :- btree_depth( LBT, LN ),
 
 btree_depth( node( LBT, _, RBT ), N ) :- btree_depth( LBT, LN ),
                                          btree_depth( RBT, RN ),
-										 LN >= RN, N is (1+LN).
+                                         LN >= RN, N is (1+LN).
 
 %
 % Tests: 
