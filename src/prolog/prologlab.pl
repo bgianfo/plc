@@ -114,23 +114,20 @@ int_mergesort( [ONE, TWO | TAIL], FL ) :- split_two( [ONE, TWO | TAIL], L1, L2 )
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Regular Expression Operations
-
-% Conventions:
 %
+% Item: epsilon
+% --------
+% (Data Structure) epsilon represents the regular expression that matches
+% the empty list.
 %
-%  epsilon:
-%  --------
-%  (Data Structure) epsilon represents the regular expression that matches
-%  the empty list.
+% Item: atom( A )
 %
-%  atom( A ):
-%  ----------
-%  (Data Structure) Represents the regular expression that matches the
-%  singleton list containing the atom A.
+% Specification
+% -------------
+% (Data Structure) Represents the regular expression that matches the
+% singleton list containing the atom A.
 %
-
-
-% Clause: seq
+% Item: seq ( RE1, RE2 )
 %
 % Specification:
 % --------------
@@ -139,12 +136,7 @@ int_mergesort( [ONE, TWO | TAIL], FL ) :- split_two( [ONE, TWO | TAIL], L1, L2 )
 % original list) where the regular expression RE1  matches the first list
 % and the regular expression RE2  matches the second list.
 %
-% Description:
-% ------------
-
-seq( RE1, RE2 ) :-
-
-% Clause: alt
+% Item: alt( RE1, RE2 )
 %
 % Specification:
 % --------------
@@ -152,25 +144,15 @@ seq( RE1, RE2 ) :-
 % the regular expression RE1  matches the list or the regular expression RE2
 % matches the list.
 %
-% Description:
-% ------------
-
-alt( RE1, RE2 ) :-
-
-% Clause: star
+% Item: star( RE )
 %
 % Specification:
 % --------------
 % (Data Structure) Represents the regular expression that matches the empty
 % list and matches any list that can be split into one or more lists (such
 % that concatenating the lists yields the original list) where the regular
-% expression RE matches % each list.
+% expression RE matches each list.
 %
-% Description:
-% ------------
-
-star( RE ) :- RE =:= []; RE =:= [RE].
-
 % Clause: re_match
 %
 % Specification:
@@ -184,71 +166,91 @@ star( RE ) :- RE =:= []; RE =:= [RE].
 % Description:
 % ------------
 %
-re_match( RE, LST ) :- re_match_aux( RE, LST ).
 
-% re_match_aux( RE, L, LS ) :- re_match(
+re_match( epsilon, LST ) :- LST == [].
 
+re_match( atom( A ), LST ) :- LST == [A].
+
+re_match( star( RE ), [HL|TL] ) :- [HL|TL] == [],
+                                   re_match( RE, HL ),
+                                   re_match( RE, TL ).
+
+re_match( alt( RE1, RE2 ), LST ) :- re_match( RE1, LST );
+                                    re_match( RE2, LST ).
+
+re_match( seq( RE1, RE2 ), [H|T] ) :- re_match( RE1, H ),
+                                      re_match( RE2, T ).
 
 
 % Test Cases:
 %
-%   ?- re_match(alt(atom(a),star(atom(b))),[]).
-%   true .
+%   Pass:
 %
-%   ?- re_match(alt(atom(a),star(atom(b))),[a]).
-%   true .
+%       ?- re_match(alt(atom(a),star(atom(b))),[a]).
+%       true .
 %
-%   ?- re_match(alt(atom(a),star(atom(b))),[a,b]).
-%   false.
+%       ?- re_match(alt(atom(a),star(atom(b))),[a,b]).
+%       false.
 %
-%   ?- re_match(alt(atom(a),star(atom(b))),[a,b,b]).
-%   false.
+%       ?- re_match(alt(atom(a),star(atom(b))),[a,b,b]).
+%       false.
 %
-%   ?- re_match(alt(atom(a),star(atom(b))),[b]).
-%   true .
+%       ?- re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[]).
+%       false.
 %
-%   ?- re_match(alt(atom(a),star(atom(b))),[b,b]).
-%   true .
+%       ?- re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[b]).
+%       false.
 %
-%   ?- re_match(alt(atom(a),star(atom(b))),[b,b|Z]).
-%   Z = [] ;
-%   Z = [b] ;
-%   Z = [b, b] ;
-%   Z = [b, b, b] ;
-%   Z = [b, b, b, b] ;
-%   Z = [b, b, b, b, b] .
+%       ?- re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[a,b,b,c,c]).
+%       false.
+
 %
-%   ?- re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[]).
-%   false.
+%   Fail:
 %
-%   ?- re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[a]).
-%   true .
+%       ?- re_match(alt(atom(a),star(atom(b))),[]).
+%       true.
 %
-%   ?- re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[b]).
-%   false.
+%       (true/false)
+%       ?- re_match(alt(atom(a),star(atom(b))),[a]).
+%       true.
 %
-%   ?- re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[a,b]).
-%   true .
+%       ?- re_match(alt(atom(a),star(atom(b))),[b]).
+%       true.
 %
-%   ?- re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[a,b,b]).
-%   true .
+%       ?- re_match(alt(atom(a),star(atom(b))),[b,b]).
+%       true.
 %
-%   ?- re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[a,b,b,c]).
-%   true .
+%       ?- re_match(alt(atom(a),star(atom(b))),[b,b|Z]).
+%       Z = [] ;
+%       Z = [b] ;
+%       Z = [b, b] ;
+%       Z = [b, b, b] ;
+%       Z = [b, b, b, b] ;
+%       Z = [b, b, b, b, b] .
 %
-%   ?- re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[a,b,b,c,c]).
-%   false.
 %
-%   ?- re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[a,b|Z]).
-%   Z = [c] ;
-%   Z = [] ;
-%   Z = [b, c] ;
-%   Z = [b] ;
-%   Z = [b, b, c] ;
-%   Z = [b, b] ;
-%   Z = [b, b, b, c] ;
-%   Z = [b, b, b] ;
-%   Z = [b, b, b, b, c] .
+%       ?- re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[a]).
+%       true .
+%
+%       ?- re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[a,b]).
+%       true .
+%
+%       ?- re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[a,b,b]).
+%       true .
+%
+%       ?- re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[a,b,b,c]).
+%       true .
+%
+%       ?- re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[a,b|Z]).
+%       Z = [c] ;
+%       Z = [] ;
+%       Z = [b, c] ;
+%       Z = [b] ;
+%       Z = [b, b, c] ;
+%       Z = [b, b] ;
+%       Z = [b, b, b, c] ;
+%       Z = [b, b, b] ;
+%       Z = [b, b, b, b, c] .
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
