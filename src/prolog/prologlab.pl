@@ -108,46 +108,8 @@ tmerge(1) :- ( ( int_mergesort([1,2,3],A),      A == [1,2,3]       ); tw('Fail #
  
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%
 % Regular Expression Operations
-%
-% Item: epsilon
-% --------
-% (Data Structure) epsilon represents the regular expression that matches
-% the empty list.
-%
-% Item: atom( A )
-%
-% Specification
-% -------------
-% (Data Structure) Represents the regular expression that matches the
-% singleton list containing the atom A.
-%
-% Item: seq ( RE1, RE2 )
-%
-% Specification:
-% --------------
-% (Data Structure) Represents the regular expression that matches any list that
-% can split into two lists (such that appending the two lists yields the
-% original list) where the regular expression RE1  matches the first list
-% and the regular expression RE2  matches the second list.
-%
-% Item: alt( RE1, RE2 )
-%
-% Specification:
-% --------------
-% (Data Structure) Represents the regular expression that matches any list where
-% the regular expression RE1  matches the list or the regular expression RE2
-% matches the list.
-%
-% Item: star( RE )
-%
-% Specification:
-% --------------
-% (Data Structure) Represents the regular expression that matches the empty
-% list and matches any list that can be split into one or more lists (such
-% that concatenating the lists yields the original list) where the regular
-% expression RE matches each list.
 %
 % Clause: re_match
 %
@@ -159,45 +121,92 @@ tmerge(1) :- ( ( int_mergesort([1,2,3],A),      A == [1,2,3]       ); tw('Fail #
 % the second parameter will likely (but need not) be instantiated with a ground
 % term when re_match is used in a top-level goal.
 %
+%
+% Item: epsilon
+% --------
+% (Data Structure) epsilon represents the regular expression that matches
+% the empty list.
+%
 % Description:
 % ------------
 % Match the empty list
+
 re_match( epsilon, [] ).
 
+% Item: atom( A )
+%
+% Specification
+% -------------
+% (Data Structure) Represents the regular expression that matches the
+% singleton list containing the atom A.
+%
 % Description:
 % ------------
 % Match an atom to the sinleton list.
+
 re_match( atom( A ), [A] ).
 
 % Description:
 % ------------
 % Match an atom to the sinleton item.
+
 re_match( atom( A ), A ).
 
+% Item: star( RE )
+%
+% Specification:
+% --------------
+% (Data Structure) Represents the regular expression that matches the empty
+% list and matches any list that can be split into one or more lists (such
+% that concatenating the lists yields the original list) where the regular
+% expression RE matches each list.
+%
 % Description:
 % ------------
 % Base case for matching the empty list.
+
 re_match( star( _ ), [] ).
 
 % Description:
 % ------------
 % Match the expression stated by the star to the entire list.
+
 re_match( star( RE ), LST ) :- re_match( RE, LST ).
 
 % Description:
 % ------------
 % Match the regular expression to any subset of the list recursively.
+
 re_match( star( RE ), [HL|TL] ) :- re_match( star(RE), HL ),!,
                                    re_match( star(RE), TL ),!.
 
+% Item: alt( RE1, RE2 )
+%
+% Specification:
+% --------------
+% (Data Structure) Represents the regular expression that matches any list where
+% the regular expression RE1  matches the list or the regular expression RE2
+% matches the list.
+%
 % Description:
 % ------------
 % Match either of the expressions to the list.
+
 re_match( alt( RE1, RE2 ), LST ) :- ( re_match( RE1, LST ) ; re_match( RE2, LST ) ).
 
+% Item: seq ( RE1, RE2 )
+%
+% Specification:
+% --------------
+% (Data Structure) Represents the regular expression that matches any list that
+% can split into two lists (such that appending the two lists yields the
+% original list) where the regular expression RE1  matches the first list
+% and the regular expression RE2  matches the second list.
+%
 % Description:
 % ------------
 % Math both expressions to seperate subsets of the list.
+
 re_match( seq( RE1, RE2 ), [H|T] ) :- re_match( RE1, H ),
                                       re_match( RE2, T ).
 
@@ -253,9 +262,8 @@ tre(1) :- ( re_match(alt(atom(a),star(atom(b))),[a]);                           
 %       - LBT: The left arm of a binary tree.
 %       - E: The element of a binary tree node.
 %       - RBT: The right arm of a binary tree.
-%       - LEAF: signifies a leaf of the tree.
-
-
+%       - leaf: signifies a leaf of the tree.
+%
 % Clause: btree_to_list
 %
 % Description:
@@ -278,17 +286,6 @@ btree_to_list( node( LBT, E, RBT ), L ) :- btree_to_list( LBT, LL ),
                                            btree_to_list( RBT, RL ),
                                            append( LL, [E], LF ),
                                            append( LF, RL, L ).
-
-%
-% Tests:
-%
-% btree_to_list(node(node(node(leaf,9,leaf),20,leaf),30,node(node(leaf,99,leaf),33,node(leaf,1000,leaf))),L).
-%
-% = [ 9, 20, 30, 99, 33, 1000 ]
-%
-% btree_to_list(node(node(leaf,2,leaf),20,node(leaf,50,leaf)), N).
-%
-
 % Clause: btree_depth
 %
 % Specification:
@@ -320,15 +317,6 @@ btree_depth( node( LBT, _, RBT ), N ) :- btree_depth( LBT, LN ),
 btree_depth( node( LBT, _, RBT ), N ) :- btree_depth( LBT, LN ),
                                          btree_depth( RBT, RN ),
                                          LN >= RN, N is (1+LN).
-
-%
-% Tests:
-%
-% btree_depth(node(node(node(leaf,9,leaf),20,leaf),30,node(node(leaf,99,leaf),33,node(leaf,1000,leaf))),N).
-%
-% = 3
-%
-
 % Clause: btree_iso
 %
 % Specification:
@@ -341,18 +329,24 @@ btree_depth( node( LBT, _, RBT ), N ) :- btree_depth( LBT, LN ),
 % Description:
 % ------------
 % Base case for the binary tree iso morphism predicate.
+
 btree_iso( leaf, leaf ).
 
 % Description:
 % ------------
+% Attempt to create the graph by swapping the two left nodes and swapping the
+% two right nodes.
+
 btree_iso( node( BTL1, X, BTR1 ), node( BTL2, X, BTR2 ) ) :- btree_iso( BTL1, BTL2 ),
                                                              btree_iso( BTR1, BTR2 ).
 % Description:
 % ------------
+% For a second attempt, try to recreate the graph by swapping the 
+% First left tree with the second right tree, also we need to try
+% swapping the first right tree, with the second left tree.
+
 btree_iso( node( BTL1, X, BTR1 ), node( BTL2, X, BTR2 ) ) :- btree_iso( BTL1, BTR2 ),
                                                              btree_iso( BTR1, BTL2 ).
-
-
 
 % Test cases:
 %
@@ -366,9 +360,7 @@ btree_iso( node( BTL1, X, BTR1 ), node( BTL2, X, BTR2 ) ) :- btree_iso( BTL1, BT
 %
 %      - btree_iso(node(node(leaf,3,leaf),3,node(leaf,5,leaf)),BT).
 %      - btree_iso(node(node(node(leaf,9,leaf),20,leaf),30,node(node(leaf,99,leaf),33,node(leaf,1000,leaf))),BT).
-
-
-
+%
 % Clause: btree_subtree
 %
 % Specification:
@@ -380,12 +372,17 @@ btree_iso( node( BTL1, X, BTR1 ), node( BTL2, X, BTR2 ) ) :- btree_iso( BTL1, BT
 %
 % Description:
 % ------------
+% Leaves can't have subtree's, so we are free to return false.
 
 btree_subtree( leaf, false ).
 
 %
 % Description:
 % ------------
+% A tree can be a subtree in many cases. 
+% See if the root node input 1, is equal to head of #2.
+% Recursively parse the Left Tree, recursively parse right tree.
+% See if the left tree or the right tree is equal to the input 2.
 
 btree_subtree( node( TL, X, TR ), node( STL, SE, STR ) ):- node( TL, X, TR ) == node( STL, SE, STR ) ;
 							   btree_subtree( TL, node( STL, SE, STR ) ) ;
@@ -394,13 +391,16 @@ btree_subtree( node( TL, X, TR ), node( STL, SE, STR ) ):- node( TL, X, TR ) == 
                                                            TR  == node( STL, SE, STR ).
 % Test cases:
 %
-%  - btree_subtree(node(node(node(leaf,9,leaf),20,leaf),30,node(node(leaf,99,leaf),33,node(leaf,1000,leaf))),node(leaf,9,leaf)).
-
-
 tbtree(1) :- ( btree_to_list(node(node(node(leaf,9,leaf),20,leaf),30,node(node(leaf,99,leaf),33,node(leaf,1000,leaf))),L), L == [9,20,30,99,33,1000] ); tw('Failed #b1'),!,
-             ( btree_to_list(node(node(leaf,2,leaf),20,node(leaf,50,leaf)), N), N == [2,20,50] ); tw('Failed #b2'),!.
+             ( btree_to_list(node(node(leaf,2,leaf),20,node(leaf,50,leaf)), N), N == [2,20,50] ); tw('Failed #b2'),!,
+             ( btree_depth(node(node(node(leaf,9,leaf),20,leaf),30,node(node(leaf,99,leaf),33,node(leaf,1000,leaf))),C), C == 3 ); tw('Failed #b3'),!,
+             ( btree_subtree(node(node(node(leaf,9,leaf),20,leaf),30,node(node(leaf,99,leaf),33,node(leaf,1000,leaf))),node(leaf,9,leaf)) ); tw('Failed #b4'),!.
+
+
 % Predicate for writing tests.
 tw(A) :- write(A),nl,fail.
 
 % Run all parts of the test suite.
-runtests :- tmerge(1),tre(1),tbtree(1). 
+runtests :- tmerge(1),
+            tre(1),
+            tbtree(1). 
