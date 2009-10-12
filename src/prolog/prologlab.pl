@@ -165,17 +165,26 @@ int_mergesort( [ONE, TWO | TAIL], FL ) :- split_two( [ONE, TWO | TAIL], L1, L2 )
 %
 % Description:
 % ------------
-%
+% Match the empty list
+re_match( epsilon, [] ).
 
-re_match( epsilon, LST ) :- LST == [].
+re_match( atom( A ), [A] ).
+re_match( atom( A ), A ).
 
-re_match( atom( A ), LST ) :- LST == [A].
-
+% Description:
+% ------------
+% Base case for matching the empty list.
 re_match( star( _ ), [] ).
 
-re_match( star( RE ), [HL|TL] ) :- re_match( RE, [HL|TL] ),!.
 
-re_match( star( RE ), [HL|TL] ) :- re_match( star(RE), HL ),
+% Description:
+% ------------
+% Match the regular expression to the list.
+re_match( star( RE ), LST ) :- re_match( RE, LST ).
+
+% Descriptoin:
+% ------------
+re_match( star( RE ), [HL|TL] ) :- re_match( star(RE), HL ),!,
                                    re_match( star(RE), TL ),!.
 
 re_match( alt( RE1, RE2 ), LST ) :- ( re_match( RE1, LST ) ; re_match( RE2, LST ) ).
@@ -192,7 +201,7 @@ test_re(1) :- ( re_match(alt(atom(a),star(atom(b))),[a]);                       
               ( (\+ re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[a,b,b,c,c])); tw('Fail #6')),!,
               ( re_match(alt(atom(a),star(atom(b))),[a]);                                tw('Fail #7') ),!,
               ( re_match(alt( atom(a), star( atom(b) ) ), [] );                          tw('Fail #8') ),!,
-              ( re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[a,b]);    tw('Fail #9') ),!,
+              ( re_match( seq( atom(a), seq( star( atom(b) ), alt( atom(c), epsilon ) ) ),[a,b]);    tw('Fail #9') ),!,
               ( re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[a]);      tw('Fail #10') ),!.
 
 % Test Cases:
@@ -222,7 +231,9 @@ test_re(1) :- ( re_match(alt(atom(a),star(atom(b))),[a]);                       
 %
 %       ?- re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[a,b]).
 %       true .
-
+%
+%       ?- re_match(alt(atom(a),star(atom(b))),[]).
+%       true.
 %
 %   Fail:
 %
@@ -233,9 +244,6 @@ test_re(1) :- ( re_match(alt(atom(a),star(atom(b))),[a]);                       
 %       Z = [b, b, b] ;
 %       Z = [b, b, b, b] ;
 %       Z = [b, b, b, b, b] .
-%
-%       ?- re_match(alt(atom(a),star(atom(b))),[]).
-%       true.
 %
 %       ?- re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[a]).
 %       true .
