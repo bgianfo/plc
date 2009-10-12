@@ -2,7 +2,6 @@
 % Author: Brian Gianforcaro
 % Tested and developed GNU Prolog v1.3.1 & SWI-PL v5.6.62
 
-
 % Clause: split_two
 %
 % Specification:
@@ -61,7 +60,7 @@ merge_two( L, [], L ).
 % Combining head of list one with the resultant merged lists.
 
 merge_two( [H1 | T1], [H2 | T2], [H1 | MERG] ):- H1 =< H2,
-                                                 merge_two( T1, [H2 | T2], MERG).
+                                                 merge_two( T1, [H2 | T2], MERG ).
 
 % Description:
 % ------------
@@ -70,7 +69,7 @@ merge_two( [H1 | T1], [H2 | T2], [H1 | MERG] ):- H1 =< H2,
 % Finally combine The head of list two with the resultant merged lists.
 
 merge_two( [H1 | T1], [H2 | T2], [H2 | MERG] ):- H1 > H2,
-                                                 merge_two( [H1 | T1], T2, MERG).
+                                                 merge_two( [H1 | T1], T2, MERG ).
 
 % Clause: int_mergesort
 %
@@ -101,15 +100,12 @@ int_mergesort( [ONE, TWO | TAIL], FL ) :- split_two( [ONE, TWO | TAIL], L1, L2 )
                                           merge_two( SORTED1, SORTED2, FL ),!.
 
 % Some of my test cases:
-%
-% int_mergesort( [5,4,3,2,1], L ).
-%
-% int_mergesort( [1,2,3,5,2], L ).
-%
-% int_mergesort( [9,8,6,5,3,2], L ).
-%
-% int_mergesort( [1,2,3], L ).
-
+% ----------------------
+tmerge(1) :- ( ( int_mergesort([1,2,3],A),      A == [1,2,3]       ); tw('Fail #m1') ),!,
+             ( ( int_mergesort([9,8,6,5,3,2],B),B == [2,3,5,6,8,9] ); tw('Fail #m2') ),!,
+             ( ( int_mergesort([5,4,3,2,1],X),  X == [1,2,3,4,5]   ); tw('Fail #m3') ),!,
+             ( ( int_mergesort([1,2,3,5,2],D),  D == [1,2,2,3,5]   ); tw('Fail #m4') ),!.
+ 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -168,7 +164,14 @@ int_mergesort( [ONE, TWO | TAIL], FL ) :- split_two( [ONE, TWO | TAIL], L1, L2 )
 % Match the empty list
 re_match( epsilon, [] ).
 
+% Description:
+% ------------
+% Match an atom to the sinleton list.
 re_match( atom( A ), [A] ).
+
+% Description:
+% ------------
+% Match an atom to the sinleton item.
 re_match( atom( A ), A ).
 
 % Description:
@@ -176,64 +179,40 @@ re_match( atom( A ), A ).
 % Base case for matching the empty list.
 re_match( star( _ ), [] ).
 
+% Description:
+% ------------
+% Match the expression stated by the star to the entire list.
+re_match( star( RE ), LST ) :- re_match( RE, LST ).
 
 % Description:
 % ------------
-% Match the regular expression to the list.
-re_match( star( RE ), LST ) :- re_match( RE, LST ).
-
-% Descriptoin:
-% ------------
+% Match the regular expression to any subset of the list recursively.
 re_match( star( RE ), [HL|TL] ) :- re_match( star(RE), HL ),!,
                                    re_match( star(RE), TL ),!.
 
+% Description:
+% ------------
+% Match either of the expressions to the list.
 re_match( alt( RE1, RE2 ), LST ) :- ( re_match( RE1, LST ) ; re_match( RE2, LST ) ).
 
+% Description:
+% ------------
+% Math both expressions to seperate subsets of the list.
 re_match( seq( RE1, RE2 ), [H|T] ) :- re_match( RE1, H ),
                                       re_match( RE2, T ).
 
-tw(A) :- write(A),nl,fail.
-test_re(1) :- ( re_match(alt(atom(a),star(atom(b))),[a]);                                tw('Fail #1') ),!,
-              ( (\+ re_match(alt(atom(a),star(atom(b))),[a,b])   );                      tw('Fail #2') ),!,
-              ( (\+ re_match(alt(atom(a),star(atom(b))),[a,b,b]) );                      tw('Fail #3') ),!,
-              ( (\+ re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[]));  tw('Fail #4')),!,
-              ( (\+ re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[b])); tw('Fail #5')),!,
-              ( (\+ re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[a,b,b,c,c])); tw('Fail #6')),!,
-              ( re_match(alt(atom(a),star(atom(b))),[a]);                                tw('Fail #7') ),!,
-              ( re_match(alt( atom(a), star( atom(b) ) ), [] );                          tw('Fail #8') ),!,
-              ( re_match( seq( atom(a), seq( star( atom(b) ), alt( atom(c), epsilon ) ) ),[a,b]);    tw('Fail #9') ),!,
-              ( re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[a]);      tw('Fail #10') ),!.
+tre(1) :- ( re_match(alt(atom(a),star(atom(b))),[a]);                                tw('Fail #r1') ),!,
+          ( (\+ re_match(alt(atom(a),star(atom(b))),[a,b])   );                      tw('Fail #r2') ),!,
+          ( (\+ re_match(alt(atom(a),star(atom(b))),[a,b,b]) );                      tw('Fail #r3') ),!,
+          ( (\+ re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[]));  tw('Fail #r4')),!,
+          ( (\+ re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[b])); tw('Fail #r5')),!,
+          ( (\+ re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[a,b,b,c,c]));  tw('Fail #r6')),!,
+          ( re_match(alt(atom(a),star(atom(b))),[a]);                                tw('Fail #r7') ),!,
+          ( re_match(alt( atom(a), star( atom(b) ) ), [] );                          tw('Fail #r8') ),!,
+          ( re_match( seq( atom(a), seq( star( atom(b) ), alt( atom(c), epsilon ) ) ),[a,b]); tw('Fail #r9') ),!,
+          ( re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[a]);      tw('Fail #r10') ),!.
 
 % Test Cases:
-%
-%   Pass:
-%
-%       ?- re_match(alt(atom(a),star(atom(b))),[a]).
-%       true .
-%
-%       ?- re_match(alt(atom(a),star(atom(b))),[a,b]).
-%       false.
-%
-%       ?- re_match(alt(atom(a),star(atom(b))),[a,b,b]).
-%       false.
-%
-%       ?- re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[]).
-%       false.
-%
-%       ?- re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[b]).
-%       false.
-%
-%       ?- re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[a,b,b,c,c]).
-%       false.
-% -
-%       ?- re_match(alt(atom(a),star(atom(b))),[a]).
-%       true.
-%
-%       ?- re_match(seq(atom(a),seq(star(atom(b)),alt(atom(c),epsilon))),[a,b]).
-%       true .
-%
-%       ?- re_match(alt(atom(a),star(atom(b))),[]).
-%       true.
 %
 %   Fail:
 %
@@ -408,10 +387,20 @@ btree_subtree( leaf, false ).
 % Description:
 % ------------
 
-btree_subtree( node( TL, _, TR ), node( STL, SE, STR ) ):- btree_subtree( TL, node( STL, SE, STR ) ) ;
+btree_subtree( node( TL, X, TR ), node( STL, SE, STR ) ):- node( TL, X, TR ) == node( STL, SE, STR ) ;
+							   btree_subtree( TL, node( STL, SE, STR ) ) ;
                                                            btree_subtree( TR, node( STL, SE, STR ) ) ;
                                                            TL  == node( STL, SE, STR ) ;
                                                            TR  == node( STL, SE, STR ).
 % Test cases:
 %
 %  - btree_subtree(node(node(node(leaf,9,leaf),20,leaf),30,node(node(leaf,99,leaf),33,node(leaf,1000,leaf))),node(leaf,9,leaf)).
+
+
+tbtree(1) :- ( btree_to_list(node(node(node(leaf,9,leaf),20,leaf),30,node(node(leaf,99,leaf),33,node(leaf,1000,leaf))),L), L == [9,20,30,99,33,1000] ); tw('Failed #b1'),!,
+             ( btree_to_list(node(node(leaf,2,leaf),20,node(leaf,50,leaf)), N), N == [2,20,50] ); tw('Failed #b2'),!.
+% Predicate for writing tests.
+tw(A) :- write(A),nl,fail.
+
+% Run all parts of the test suite.
+runtests :- tmerge(1),tre(1),tbtree(1). 
