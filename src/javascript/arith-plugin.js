@@ -23,17 +23,18 @@ function Arith()
                     "multiplicaiton":multiplication(),
                     "division":division() 
                   };
-    /** 
-     * An array of up to four symbols for the operations. 
-     * The symbols should match the names of the properties in opList.
-     */
-    this.opNames = { 
-                     "+":"addition", 
-                     "-":"subtraction",
-                     "*":"multiplicaiton",
-                     "/":"division"
-                   };
 }
+
+/** 
+ * An array of up to four symbols for the operations. 
+ * The symbols should match the names of the properties in opList.
+ */
+Arith.opNames = { 
+                  "+":"addition", 
+                  "-":"subtraction",
+                  "*":"multiplicaiton",
+                  "/":"division"
+                };
 
 /**
  * Duplicate the top value on the stack.

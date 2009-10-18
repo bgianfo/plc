@@ -3,29 +3,96 @@
 <head>
   <title>Calculator</title>
 
-  <script type="javascript" src="arith-plugin.js">
-  <script type="javascript">
+  <script type="text/javascript" src="arith-plugin.js">
+  </script>
+
+  <script type="text/javascript">
 
     /**
      * Author: Brian Gianforcaro bjg1955@cs.rit.edu
      * PLC Lab #3: JavaScript 
      */
 
+    /**
+     * Short-Hand function to call doc.getElembyId(...)
+     * @param el - 
+     */
+
+    function newElm( str )
+    {
+        return document.createElement(str);
+    }
+
     function byId( el )
     { 
-      return document.getElementById(el);
+      return document.getElementById( el );
     }
 
-    
-    function render() 
+    function genButtons(btnCanvas) 
     {
-        canvas = byId("canvas").
+      content = "";
 
+      var ops = [];
+      for (var prop in Arith.opNames) 
+      {
+        ops.push(prop);
+        console.log(prop);
+      }
+
+      for( row = 3; row >= 0 ; row-- )
+      {
+    
+        for( col = (row * 3) - 2; col <= (row * 3); col++ )
+        {
+          content = content + ("<button>" + col + "</button>");
+        }
+        content = content + "<button>" + ops[row] + "</button>";
+        content = content + "<br>";
+
+      }
+      btnCanvas.innerHTML = content;
     }
+
+    function render()
+    {
+      canvas = byId("canvas")
+
+      /* Create the table and set it's properties */
+      table = newElm('table');
+      table.align = "center";
+      table.border = "0";
+
+      tbody = newElm('tbody');
+
+      tr = newElm('tbody');
+
+      td = newElm('td');
+      td.colspan = "4";
+
+
+      input = newElm('input');
+      input.type = "text";
+
+      div = newElm('div');
+      div.id = "button-canvas";
+
+      /* Constuct the table of all indvidual elements. */
+      td.appendChild( input );
+      tr.appendChild( td );
+      tbody.appendChild( tr );
+      tbody.appendChild( div );
+      table.appendChild( tbody );
+
+      /* Append the final table to the canvas */
+      canvas.appendChild( table );
+    
+      genButtons( div );
+    }
+
   </script>
 
 </head>
-<body onLoad="javascript:render();">
+<body onload="render();">
     <div id="canvas">
     </div>
 </body>
