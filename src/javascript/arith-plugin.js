@@ -3,6 +3,16 @@
  * PLC Lab #3: JavaScript
  */
 
+
+DEBUG = true;
+
+/**
+ * Turn off logging statements if they become annoying.
+ */
+if (!DEBUG) {
+  console.log = function() {};
+}
+
 /**
  * Arith class constructor
  */
@@ -12,18 +22,19 @@ function Arith()
     this.stack = Array();
     this.stack[0] = 0;
 
-    /**
-     * An object that maps the string names of the calculator's 
-     * operation buttons to the operation methods above by use
-     * of its property names and values. 
-     */
-    this.opList = {
-                    "addition":addition(), 
-                    "subtraction":subtraction(),
-                    "multiplicaiton":multiplication(),
-                    "division":division() 
-                  };
 }
+
+/**
+ * An object that maps the string names of the calculator's 
+ * operation buttons to the operation methods above by use
+ * of its property names and values. 
+ */
+Arith.opList = {
+                 "addition":addition(), 
+                 "subtraction":subtraction(),
+                 "multiplicaiton":multiplication(),
+                 "division":division() 
+               };
 
 /** 
  * An array of up to four symbols for the operations. 
@@ -65,3 +76,21 @@ Arith.prototype.setStackTop = function( value )
 {
    this.stack[0] = value; 
 }
+
+
+function ophelper( op ) {
+    op.call(Arith);
+}
+
+function addition() {
+}
+
+function subtraction() {
+}
+
+function multiplication() {
+}
+
+function division() {
+}
+

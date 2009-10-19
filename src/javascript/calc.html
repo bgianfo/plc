@@ -36,7 +36,6 @@
       for (var prop in Arith.opNames) 
       {
         ops.push(prop);
-        console.log(prop);
       }
 
       for( row = 3; row >= 0 ; row-- )
@@ -46,7 +45,11 @@
         {
           content = content + ("<button>" + col + "</button>");
         }
-        content = content + "<button>" + ops[row] + "</button>";
+
+        op = Arith.opNames[ops[row]];
+        console.log(op);
+
+        content = content + "<button onClick=\"\'"+op+"\'.call(Arith);\">" + ops[row] + "</button>";
         content = content + "<br>";
 
       }
