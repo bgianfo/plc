@@ -13,9 +13,12 @@
      * PLC Lab #3: JavaScript 
      */
 
+    var model;
+
+
     /**
-     * Short-Hand function to call doc.getElembyId(...)
-     * @param el - 
+     * Short hand for doc.createElem..(..)
+     * @param 
      */
 
     function newElm( str )
@@ -23,6 +26,11 @@
         return document.createElement(str);
     }
 
+    /**
+     * Short-Hand function to call doc.getElembyId(...)
+     * @param el - element to snag from the DOM.
+     * @return The selected id
+     */
     function byId( el )
     { 
       return document.getElementById( el );
@@ -33,7 +41,7 @@
       content = "";
 
       var ops = [];
-      for (var prop in Arith.opNames) 
+      for (var prop in model.opNames) 
       {
         ops.push(prop);
       }
@@ -43,13 +51,13 @@
     
         for( col = (row * 3) - 2; col <= (row * 3); col++ )
         {
-          content = content + ("<button>" + col + "</button>");
+          content = content + ("<button onClick=\"model.stack.push(" + col + ");\" >" + col + "</button>");
         }
 
-        op = Arith.opNames[ops[row]];
+        op = model.opNames[ops[row]];
         console.log(op);
 
-        content = content + "<button onClick=\"\'"+op+"\'.call(Arith);\">" + ops[row] + "</button>";
+        content = content + "<button onClick=\'model.opList[" + op + "];\'>" + ops[row] + "</button>";
         content = content + "<br>";
 
       }
@@ -58,6 +66,8 @@
 
     function render()
     {
+      model = Arith();
+
       canvas = byId("canvas")
 
       /* Create the table and set it's properties */
