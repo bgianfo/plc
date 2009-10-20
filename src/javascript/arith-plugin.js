@@ -22,36 +22,14 @@ function Arith()
     this.stack = Array();
     this.stack[0] = 0;
 
-
-    /**
-     * An object that maps the string names of the calculator's 
-     * operation buttons to the operation methods above by use
-     * of its property names and values. 
-     */
-    this.opList = {
-                    "addition":this.addition(), 
-                    "subtraction":this.subtraction(),
-                    "multiplicaiton":this.multiplication(),
-                    "division":this.division() 
-                  };
-
-    /** 
-     * An array of up to four symbols for the operations. 
-     * The symbols should match the names of the properties in opList.
-     */
-    this.opNames = { 
-                     "+":"addition", 
-                     "-":"subtraction",
-                     "*":"multiplicaiton",
-                     "/":"division"
-                   };
+    this.opNames = {};
+    this.opList = {};
 
     /**
      * Duplicate the top value on the stack.
      */
-    this.prototype.enter = function() 
-    {
-        this.stack.push(this.stack.top());
+    this.enter = function() {
+      this.stack.push( this.stack.top() );
     }
 
     /**
@@ -60,9 +38,9 @@ function Arith()
      *
      * @return The top of the stack, or zero.
      */
-    this.prototype.getStackTop = function() 
+    this.getStackTop = function() 
     {
-        return (this.stack.top() === undefined) ? 0 : this.stack.top();
+      return (this.stack.top() === undefined) ? 0 : this.stack.top();
     }
 
     /**
@@ -71,56 +49,9 @@ function Arith()
      *
      * @param v - The value to set the top of the stack to
      */
-    this.prototype.setStackTop = function( value ) 
+    this.setStackTop = function( value ) 
     {
        this.stack[0] = value; 
     }
-
-    /**
-     * Addition operator callback
-     */
-    this.prototype.addition = function()
-    {
-        first = this.stack.pop();
-        second = this.stack.pop();
-
-        this.setStackTop( first + second );
-    }
-
-
-    /**
-     * Subtraction operator callback
-     */
-    this.prototype.subtraction = function() 
-    {
-        first = this.stack.pop();
-        second = this.stack.pop();
-
-        this.setStackTop( first - second );
-    }
-
-    /**
-     * Multiplication operator callback
-     */ 
-    this.prototype.multiplication = function ()
-    {
-        first = this.stack.pop();    
-        second = this.stack.pop();
-
-        this.setStackTop( first * second ); 
-    }
-
-    /**
-     * division operator callback
-     */ 
-    this.prototype.division = function () 
-    {
-        divisor = this.stack.pop();
-        dividend = this.stack.pop(); 
-
-        divisor/divident;
-
-        this.setStackTop( divisor/divident );
-
-    }
 }
+

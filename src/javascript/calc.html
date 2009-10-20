@@ -13,7 +13,7 @@
      * PLC Lab #3: JavaScript 
      */
 
-    var model;
+     var model = {};
 
 
     /**
@@ -41,7 +41,7 @@
       content = "";
 
       var ops = [];
-      for (var prop in model.opNames) 
+      for (prop in model.opNames) 
       {
         ops.push(prop);
       }
@@ -66,7 +66,8 @@
 
     function render()
     {
-      model = Arith();
+
+      initModel();
 
       canvas = byId("canvas")
 
@@ -100,6 +101,84 @@
       canvas.appendChild( table );
     
       genButtons( div );
+    }
+
+
+    function initModel()
+    {
+        model = Arith();
+
+        /* Attatch our opList and opNames */
+
+        /**
+         * An object that maps the string names of the calculator's 
+         * operation buttons to the operation methods above by use
+         * of its property names and values. 
+         */
+        model.opList = {
+                          "addition":    function ()
+                                         {
+                                          first = model.stack.pop();
+                                          second = model.stack.pop();
+                                          model.setStackTop( first + second );
+                                         },
+                          "subtraction": function() 
+                                         {
+                                            first = model.stack.pop();
+                                            second = model.stack.pop();
+                                            model.setStackTop( first - second );
+                                         }
+,
+                          "multiplicaiton":multiplication(),
+                          "division":division() 
+                       };
+
+       /** 
+        * An array of up to four symbols for the operations. 
+        * The symbols should match the names of the properties in opList.
+        */
+        model.opNames = { 
+                          "+":"addition", 
+                          "-":"subtraction",
+                          "*":"multiplicaiton",
+                          "/":"division"
+                        };
+    }
+
+    /**
+     * Subtraction operator callback
+     */
+    subtraction = function() 
+    {
+        first = model.stack.pop();
+        second = model.stack.pop();
+
+        model.setStackTop( first - second );
+    }
+
+    /**
+     * Multiplication operator callback
+     */ 
+    multiplication = function ()
+    {
+        first = model.stack.pop();    
+        second = model.stack.pop();
+
+        model.setStackTop( first * second ); 
+    }
+
+    /**
+     * division operator callback
+     */ 
+    division = function () 
+    {
+        divisor = model.stack.pop();
+        dividend = model.stack.pop(); 
+
+        divisor/divident;
+
+        model.setStackTop( divisor/divident );
+
     }
 
   </script>
