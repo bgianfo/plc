@@ -2,28 +2,23 @@
 <html>
 <head>
   <title>Calculator</title>
-
-  <script type="text/javascript" src="arith-plugin.js">
-  </script>
+  <script type="text/javascript" src="arith-plugin.js"></script>
 
   <script type="text/javascript">
-
     /**
      * Author: Brian Gianforcaro bjg1955@cs.rit.edu
      * PLC Lab #3: JavaScript 
      */
 
-     var model = {};
-
+    var model = new Arith(); 
 
     /**
      * Short hand for doc.createElem..(..)
      * @param 
      */
 
-    function newElm( str )
-    {
-        return document.createElement(str);
+    function newElm( str ) {
+      return document.createElement( str );
     }
 
     /**
@@ -31,161 +26,99 @@
      * @param el - element to snag from the DOM.
      * @return The selected id
      */
-    function byId( el )
-    { 
+    function byId( el ) { 
       return document.getElementById( el );
     }
 
-    function genButtons(btnCanvas) 
-    {
-      content = "";
+    
+    /**
+     * Intialize the controller, buttons.
+     * @param btnCanvas - Tag to attatch button's to.
+     */
+    function initController( btnCanvas ) {
 
-      var ops = [];
-      for (prop in model.opNames) 
-      {
-        ops.push(prop);
+      /** Helper function to build buttons in table */
+      function appendTree( tr, td, btn ) {
+        td.appendChild( btn );
+        tr.appendChild( td );
       }
 
-      for( row = 3; row >= 0 ; row-- )
-      {
-    
-        for( col = (row * 3) - 2; col <= (row * 3); col++ )
-        {
-          content = content + ("<button onClick=\"model.stack.push(" + col + ");\" >" + col + "</button>");
+      /** Helper function to abstract away boiler plate button creation */
+      function makeButton( tr, name ) {
+        td = newElm('td');
+        btn = newElm('button');
+        btn.innerHTML = name;
+        appendTree( tr, td, btn );
+        return btn;
+      }
+
+      /* Obtain operations form the model */
+      var ops = [];
+      for( prop in model.opNames ) {
+        ops.push(prop);
+      }
+      
+      aux = { "C":"action", 
+              "0":"model.stack.push( 0 );",
+              "E":"model.enter();" }
+
+      for( row = 3; row >= 0 ; row-- ) {
+        tr = newElm('tr');
+
+        if ( row != 0 ) {
+          for( col = (row * 3) - 2; col <= (row * 3); col++ ) {
+            button = makeButton( tr, col )
+            button.onClick="model.stack.push(" + col + ");";
+          }
+        } else {
+          for ( op in aux ) {
+              button = makeButton( tr, op );
+              button.onClick = aux[op];
+          }
         }
 
         op = model.opNames[ops[row]];
-        console.log(op);
 
-        content = content + "<button onClick=\'model.opList[" + op + "];\'>" + ops[row] + "</button>";
-        content = content + "<br>";
+        button = makeButton( tr, ops[row] )
+        button.onclick="mode.opList[" + op + "];";
 
+        btnCanvas.appendChild( tr );
       }
-      btnCanvas.innerHTML = content;
+
+
     }
 
-    function render()
-    {
-
-      initModel();
-
-      canvas = byId("canvas")
+    function initView() {
 
       /* Create the table and set it's properties */
-      table = newElm('table');
-      table.align = "center";
-      table.border = "0";
+      table = byId('canvas');
 
-      tbody = newElm('tbody');
-
-      tr = newElm('tbody');
-
+      tr = newElm('tr');
       td = newElm('td');
-      td.colspan = "4";
+      td.colSpan = 4;
 
 
       input = newElm('input');
       input.type = "text";
 
-      div = newElm('div');
-      div.id = "button-canvas";
+      btnbody = newElm('tbody');
+      btnbody.id = "button-canvas";
 
       /* Constuct the table of all indvidual elements. */
       td.appendChild( input );
       tr.appendChild( td );
-      tbody.appendChild( tr );
-      tbody.appendChild( div );
-      table.appendChild( tbody );
+      btnbody.appendChild( tr );
+      table.appendChild( btnbody );
 
       /* Append the final table to the canvas */
-      canvas.appendChild( table );
-    
-      genButtons( div );
+      initController( btnbody );
     }
 
-
-    function initModel()
-    {
-        model = Arith();
-
-        /* Attatch our opList and opNames */
-
-        /**
-         * An object that maps the string names of the calculator's 
-         * operation buttons to the operation methods above by use
-         * of its property names and values. 
-         */
-        model.opList = {
-                          "addition":    function ()
-                                         {
-                                          first = model.stack.pop();
-                                          second = model.stack.pop();
-                                          model.setStackTop( first + second );
-                                         },
-                          "subtraction": function() 
-                                         {
-                                            first = model.stack.pop();
-                                            second = model.stack.pop();
-                                            model.setStackTop( first - second );
-                                         }
-,
-                          "multiplicaiton":multiplication(),
-                          "division":division() 
-                       };
-
-       /** 
-        * An array of up to four symbols for the operations. 
-        * The symbols should match the names of the properties in opList.
-        */
-        model.opNames = { 
-                          "+":"addition", 
-                          "-":"subtraction",
-                          "*":"multiplicaiton",
-                          "/":"division"
-                        };
-    }
-
-    /**
-     * Subtraction operator callback
-     */
-    subtraction = function() 
-    {
-        first = model.stack.pop();
-        second = model.stack.pop();
-
-        model.setStackTop( first - second );
-    }
-
-    /**
-     * Multiplication operator callback
-     */ 
-    multiplication = function ()
-    {
-        first = model.stack.pop();    
-        second = model.stack.pop();
-
-        model.setStackTop( first * second ); 
-    }
-
-    /**
-     * division operator callback
-     */ 
-    division = function () 
-    {
-        divisor = model.stack.pop();
-        dividend = model.stack.pop(); 
-
-        divisor/divident;
-
-        model.setStackTop( divisor/divident );
-
-    }
-
-  </script>
+    </script>
 
 </head>
-<body onload="render();">
-    <div id="canvas">
-    </div>
+<body onload="initView();">
+    <table id="canvas" border="0" align="center">
+    </table>
 </body>
 </html>
