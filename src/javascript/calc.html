@@ -3,7 +3,6 @@
 <head>
   <title>Calculator</title>
   <script type="text/javascript" src="arith-plugin.js"></script>
-
   <script type="text/javascript">
     /**
      * Author: Brian Gianforcaro bjg1955@cs.rit.edu
@@ -13,10 +12,25 @@
     var model = new Arith(); 
 
     /**
-     * Short hand for doc.createElem..(..)
-     * @param 
+     * Auxiliary functions for calculator
      */
+    aux = {
+      "C" : function() {
+        model.stack = new Array(); 
+        model.stack[0] = 0; 
+      }, 
+      "0" : function() {
+        model.stack.push( 0 );
+      },
+      "E" : function() { 
+        model.enter();
+      } 
+    }
 
+    /**
+     * Short hand for doc.createElem..(..)
+     * @param str - Element type to create
+     */
     function newElm( str ) {
       return document.createElement( str );
     }
@@ -30,9 +44,16 @@
       return document.getElementById( el );
     }
 
+    /**
+     * Display the parameterized value 
+     */
+    function pushtoDisplay( value ) {
+      input = byId('input');
+      input.value = value; 
+    }
     
     /**
-     * Intialize the controller, buttons.
+     * Initialize the controller, buttons.
      * @param btnCanvas - Tag to attatch button's to.
      */
     function initController( btnCanvas ) {
@@ -52,54 +73,64 @@
         return btn;
       }
 
-      /* Obtain operations form the model */
+      /* Obtain operations from the model */
       var ops = [];
       for( prop in model.opNames ) {
         ops.push(prop);
       }
       
-      aux = { "C":"action", 
-              "0":"model.stack.push( 0 );",
-              "E":"model.enter();" }
 
       for( row = 3; row >= 0 ; row-- ) {
         tr = newElm('tr');
 
+        // Render all regular buttons if not at the bottom row.
         if ( row != 0 ) {
           for( col = (row * 3) - 2; col <= (row * 3); col++ ) {
             button = makeButton( tr, col )
-            button.onClick="model.stack.push(" + col + ");";
+            button.addEventListener('click', function(e) {
+              val = parseInt(e.target.innerHTML);
+              pushtoDisplay( val );
+              model.stack.push( val );
+            },false);
           }
-        } else {
-          for ( op in aux ) {
-              button = makeButton( tr, op );
-              button.onClick = aux[op];
+        } else { 
+          // Bottom row buttons need special care.
+          for( op in aux ) {
+            button = makeButton( tr, op );
+            button.addEventListener('click', function(e) {
+              action = e.target.innerHTML;
+              console.log(action);
+              aux[action]();
+              pushtoDisplay( model.getStackTop() );
+            },false);
           }
         }
 
-        op = model.opNames[ops[row]];
-
         button = makeButton( tr, ops[row] )
-        button.onclick="mode.opList[" + op + "];";
+        button.addEventListener('click', function(e) {
+          action = e.target.innerHTML;
+          method = model.opList[ model.opNames[ action ] ];
+          console.log( method );
+          method.call( model );
+        },false);
 
         btnCanvas.appendChild( tr );
       }
-
-
     }
 
+    /**
+     * Initialize the root of the view table.
+     */
     function initView() {
-
       /* Create the table and set it's properties */
       table = byId('canvas');
-
       tr = newElm('tr');
       td = newElm('td');
       td.colSpan = 4;
 
-
       input = newElm('input');
       input.type = "text";
+      input.id = "input";
 
       btnbody = newElm('tbody');
       btnbody.id = "button-canvas";
