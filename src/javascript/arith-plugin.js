@@ -1,5 +1,5 @@
 /**
- * Author: Brian Gianforcaro bjg1955@cs.rit.edu
+ * Author: Brian Gianforcaro (bjg1955@cs.rit.edu)
  * PLC Lab #3: JavaScript
  */
 
@@ -16,7 +16,8 @@ if (!DEBUG) {
  * Arith class constructor
  */
 function Arith() {
-    /**
+
+  /**
    * Duplicate the top value on the stack.
    */
   this.enter = function() {
@@ -37,16 +38,16 @@ function Arith() {
    * Set the value of the top of the stack to value. 
    * The stack size is unchanged.
    *
-   * @param v - The value to set the top of the stack to
+   * @param value - The value to set the top of the stack to
    */
   this.setStackTop = function( value ) {
      console.log( "push: " + value );
      this.stack[0] = value; 
   }
 
- /**
-  * Addition operator callback
-  */ 
+  /**
+   * Addition operator callback
+   */ 
   Arith.prototype.addition = function() {
     console.log("calling addition")
     first = parseInt( this.stack.pop() );

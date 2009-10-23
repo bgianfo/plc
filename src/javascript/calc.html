@@ -24,7 +24,7 @@
       },
       "E" : function() { 
         model.enter();
-      } 
+      }
     }
 
     /**
@@ -40,7 +40,7 @@
      * @param el - element to snag from the DOM.
      * @return The selected id
      */
-    function byId( el ) { 
+    function byId( el ) {
       return document.getElementById( el );
     }
 
@@ -49,12 +49,12 @@
      */
     function pushtoDisplay( value ) {
       input = byId('input');
-      input.value = value; 
+      input.value = value;
     }
     
     /**
      * Initialize the controller, buttons.
-     * @param btnCanvas - Tag to attatch button's to.
+     * @param btnCanvas - Tag to attach button's to.
      */
     function initController( btnCanvas ) {
 
@@ -78,7 +78,6 @@
       for( prop in model.opNames ) {
         ops.push(prop);
       }
-      
 
       for( row = 3; row >= 0 ; row-- ) {
         tr = newElm('tr');
@@ -93,13 +92,12 @@
               model.stack.push( val );
             },false);
           }
-        } else { 
+        } else {
           // Bottom row buttons need special care.
           for( op in aux ) {
             button = makeButton( tr, op );
             button.addEventListener('click', function(e) {
               action = e.target.innerHTML;
-              console.log(action);
               aux[action]();
               pushtoDisplay( model.getStackTop() );
             },false);
@@ -110,7 +108,6 @@
         button.addEventListener('click', function(e) {
           action = e.target.innerHTML;
           method = model.opList[ model.opNames[ action ] ];
-          console.log( method );
           method.call( model );
         },false);
 
@@ -135,7 +132,7 @@
       btnbody = newElm('tbody');
       btnbody.id = "button-canvas";
 
-      /* Constuct the table of all indvidual elements. */
+      /* Constuct the table of all individuals elements. */
       td.appendChild( input );
       tr.appendChild( td );
       btnbody.appendChild( tr );
@@ -144,12 +141,9 @@
       /* Append the final table to the canvas */
       initController( btnbody );
     }
-
     </script>
-
 </head>
 <body onload="initView();">
-    <table id="canvas" border="0" align="center">
-    </table>
+    <table id="canvas" border="0" align="center"></table>
 </body>
 </html>
