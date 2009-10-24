@@ -3,147 +3,146 @@
 <head>
   <title>Calculator</title>
   <script type="text/javascript" src="arith-plugin.js"></script>
-  <script type="text/javascript">
-    /**
-     * Author: Brian Gianforcaro bjg1955@cs.rit.edu
-     * PLC Lab #3: JavaScript 
-     */
-
-    var model = new Arith(); 
-
-    /**
-     * Auxiliary functions for calculator
-     */
-    aux = {
-      "C" : function() {
-        model.stack = new Array(); 
-        model.stack[0] = 0; 
-      }, 
-      "0" : function() {
-        model.stack.push( 0 );
-      },
-      "E" : function() { 
-        model.enter();
-      }
-    }
-
-    /**
-     * Short hand for doc.createElem..(..)
-     * @param str - Element type to create
-     */
-    function newElm( str ) {
-      return document.createElement( str );
-    }
-
-    /**
-     * Short-Hand function to call doc.getElembyId(...)
-     * @param el - element to snag from the DOM.
-     * @return The selected id
-     */
-    function byId( el ) {
-      return document.getElementById( el );
-    }
-
-    /**
-     * Display the parameterized value 
-     */
-    function pushtoDisplay( value ) {
-      input = byId('input');
-      input.value = value;
-    }
-    
-    /**
-     * Initialize the controller, buttons.
-     * @param btnCanvas - Tag to attach button's to.
-     */
-    function initController( btnCanvas ) {
-
-      /** Helper function to build buttons in table */
-      function appendTree( tr, td, btn ) {
-        td.appendChild( btn );
-        tr.appendChild( td );
-      }
-
-      /** Helper function to abstract away boiler plate button creation */
-      function makeButton( tr, name ) {
-        td = newElm('td');
-        btn = newElm('button');
-        btn.innerHTML = name;
-        appendTree( tr, td, btn );
-        return btn;
-      }
-
-      /* Obtain operations from the model */
-      var ops = [];
-      for( prop in model.opNames ) {
-        ops.push(prop);
-      }
-
-      for( row = 3; row >= 0 ; row-- ) {
-        tr = newElm('tr');
-
-        // Render all regular buttons if not at the bottom row.
-        if ( row != 0 ) {
-          for( col = (row * 3) - 2; col <= (row * 3); col++ ) {
-            button = makeButton( tr, col )
-            button.addEventListener('click', function(e) {
-              val = parseInt(e.target.innerHTML);
-              pushtoDisplay( val );
-              model.stack.push( val );
-            },false);
-          }
-        } else {
-          // Bottom row buttons need special care.
-          for( op in aux ) {
-            button = makeButton( tr, op );
-            button.addEventListener('click', function(e) {
-              action = e.target.innerHTML;
-              aux[action]();
-              pushtoDisplay( model.getStackTop() );
-            },false);
-          }
-        }
-
-        button = makeButton( tr, ops[row] )
-        button.addEventListener('click', function(e) {
-          action = e.target.innerHTML;
-          method = model.opList[ model.opNames[ action ] ];
-          method.call( model );
-        },false);
-
-        btnCanvas.appendChild( tr );
-      }
-    }
-
-    /**
-     * Initialize the root of the view table.
-     */
-    function initView() {
-      /* Create the table and set it's properties */
-      table = byId('canvas');
-      tr = newElm('tr');
-      td = newElm('td');
-      td.colSpan = 4;
-
-      input = newElm('input');
-      input.type = "text";
-      input.id = "input";
-
-      btnbody = newElm('tbody');
-      btnbody.id = "button-canvas";
-
-      /* Constuct the table of all individuals elements. */
-      td.appendChild( input );
-      tr.appendChild( td );
-      btnbody.appendChild( tr );
-      table.appendChild( btnbody );
-
-      /* Append the final table to the canvas */
-      initController( btnbody );
-    }
-    </script>
 </head>
 <body onload="initView();">
-    <table id="canvas" border="0" align="center"></table>
+  <table id="canvas" border="0" align="center"></table>
 </body>
+<script type="text/javascript">
+
+  /**
+   * Author: Brian Gianforcaro (bjg1955@cs.rit.edu)
+   * PLC Lab #3: JavaScript
+   */
+  var model = new Arith();
+  var display;
+  /* Auxiliary functions for calculator */
+  aux = {
+    "C" : function() {
+      model.stack = new Array();
+      model.stack[0] = 0;
+    },
+    "0" : function() {
+      model.stack.push( 0 );
+    },
+    "E" : function() {
+      model.enter();
+    }
+  };
+
+  /**
+   * Short hand for doc.createElem..(..)
+   * @param str - DOM element type to create
+   */
+  function newElm( str ) {
+    return document.createElement( str );
+  }
+
+  /**
+   * Short-Hand function to call doc.getElembyId(...)
+   * @param el - element to snag from the DOM.
+   * @return The object represented by the given id.
+   */
+  function byId( el ) {
+    return document.getElementById( el );
+  }
+
+    /**
+   * Initialize the controller, buttons.
+   * @param btnCanvas - Tag to attach button's to.
+   */
+  function initController( btnCanvas ) {
+
+    /** Helper function to build buttons in table */
+    function appendTree( tr, td, btn ) {
+      td.appendChild( btn );
+      tr.appendChild( td );
+    }
+
+    /** Helper function to abstract away boiler plate button creation */
+    function makeButton( tr, name ) {
+      td = this.newElm('td');
+      btn = this.newElm('button');
+      btn.innerHTML = name;
+      appendTree( tr, td, btn );
+      return btn;
+    }
+
+    /* Obtain operations from the model */
+    var operations = [];
+    for( name in model.opNames ) {
+      operations.push( name );
+    }
+
+    for( row = 3; row >= 0 ; row-- ) {
+      tr = newElm('tr');
+
+      // Render all regular buttons if not at the bottom row.
+      if ( row != 0 ) {
+        for( col = (row * 3) - 2; col <= (row * 3); col++ ) {
+          button = makeButton( tr, col )
+          button.addEventListener( 'click', function(e) {
+            val = parseInt( e.target.innerHTML );
+            display.set( val );
+            model.stack.push( val );
+          },false);
+        }
+      } else {
+        // Bottom row buttons need special care.
+        for( operation in aux ) {
+          button = makeButton( tr, operation );
+          button.addEventListener( 'click', function(e) {
+            action = e.target.innerHTML;
+            aux[action]();
+            display.set( model.getStackTop() );
+          },false);
+        }
+      }
+
+      button = makeButton( tr, operations[row] )
+      button.addEventListener( 'click', function(e) {
+        action = e.target.innerHTML;
+        method = model.opList[ model.opNames[ action ] ];
+        method.call( model );
+      },false);
+
+      btnCanvas.appendChild( tr );
+    }
+  }
+
+  /**
+   * Initialize the root of the view table.
+   */
+  function initView() {
+    /* Create the table and set it's properties */
+    table = this.byId('canvas');
+    tr = this.newElm('tr');
+    td = this.newElm('td');
+    td.colSpan = 4;
+
+    input = this.newElm('input');
+    input.type = "text";
+    input.id = "input";
+
+    btnbody = this.newElm('tbody');
+    btnbody.id = "button-canvas";
+
+    /* Construct the table of all individuals elements. */
+    td.appendChild( input );
+    tr.appendChild( td );
+    btnbody.appendChild( tr );
+    table.appendChild( btnbody );
+    display  = this.byId('input');
+
+    /**
+     * Display the parameterized value
+     * @param digits - The value to display
+     */
+    display.set = function( digits ) {
+      this.value = digits;
+    };
+
+    /* Append the final table to the canvas */
+    this.initController( btnbody );
+  }
+</script>
 </html>
