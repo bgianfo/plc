@@ -82,8 +82,8 @@
           button = makeButton( tr, col )
           button.addEventListener( 'click', function(e) {
             val = parseInt( e.target.innerHTML );
-            display.set( val );
             model.stack.push( val );
+            display.update();
           },false);
         }
       } else {
@@ -93,7 +93,7 @@
           button.addEventListener( 'click', function(e) {
             action = e.target.innerHTML;
             aux[action]();
-            display.set( model.getStackTop() );
+            display.update();
           },false);
         }
       }
@@ -103,6 +103,7 @@
         action = e.target.innerHTML;
         method = model.opList[ model.opNames[ action ] ];
         method.call( model );
+        display.update();
       },false);
 
       btnCanvas.appendChild( tr );
@@ -134,11 +135,10 @@
     display  = this.byId('input');
 
     /**
-     * Display the parameterized value
-     * @param digits - The value to display
+     * Display the top of the stack.
      */
-    display.set = function( digits ) {
-      this.value = digits;
+    display.update = function() {
+      this.value = model.getStackTop();
     };
 
     /* Append the final table to the canvas */
