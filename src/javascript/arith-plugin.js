@@ -20,7 +20,7 @@ function Arith() {
   /**
    * Duplicate the top value on the stack.
    */
-  this.enter = function() {
+  Arith.prototype.enter = function() {
     this.stack.push( this.stack[0] );
   }
 
@@ -30,7 +30,7 @@ function Arith() {
    *
    * @return The top of the stack, or zero.
    */
-  this.getStackTop = function() {
+  Arith.prototype.getStackTop = function() {
     return (this.stack[0] === undefined) ? 0 : this.stack[0];
   }
 
@@ -40,7 +40,7 @@ function Arith() {
    *
    * @param value - The value to set the top of the stack to
    */
-  this.setStackTop = function( value ) {
+  Arith.prototype.setStackTop = function( value ) {
      console.log( "push: " + value );
      this.stack[0] = value; 
   }
@@ -87,9 +87,9 @@ function Arith() {
   }
 
   /* An array of numbers recently entered by the user or computed. */
-  this.stack = new Array();
+  Arith.prototype.stack = new Array();
 
-  this.stack[0] = 0;
+  Arith.prototype.stack[0] = 0;
 
   /** 
    * An array of up to four symbols for the operations. 
