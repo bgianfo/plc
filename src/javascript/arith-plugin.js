@@ -15,11 +15,12 @@ if ( !DEBUG ) { console.log = function(){}; }
  * Arith class constructor
  */
 function Arith() {
+
   /**
    * Duplicate the top value on the stack.
    */
   Arith.prototype.enter = function() {
-    this.stack.push( this.stack[0] );
+    this.stack.push( this.stack[this.stack.length-1] );
   }
 
   /**
@@ -29,7 +30,7 @@ function Arith() {
    * @return The top of the stack, or zero.
    */
   Arith.prototype.getStackTop = function() {
-    return (this.stack[0] === undefined) ? 0 : this.stack[0];
+    return this.stack[this.stack.length-1];
   }
 
   /**
@@ -39,8 +40,8 @@ function Arith() {
    * @param value - The value to set the top of the stack to
    */
   Arith.prototype.setStackTop = function( value ) {
-     console.log( "push: " + value );
-     this.stack[0] = value;
+     console.log( "setstack: " + value );
+     this.stack[this.stack.length-1] = value;
   }
 
   /**

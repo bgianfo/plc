@@ -98,6 +98,7 @@
         }
       }
 
+      // Operation buttons come last in the columns
       button = makeButton( tr, operations[row] )
       button.addEventListener( 'click', function(e) {
         action = e.target.innerHTML;
@@ -111,7 +112,7 @@
   }
 
   /**
-   * Initialize the root of the view table.
+   * Initialize the calculator view.
    */
   function initView() {
     /* Create the table and set it's properties */
@@ -135,11 +136,14 @@
     display  = this.byId('input');
 
     /**
-     * Display the top of the stack.
+     * Update the display with the top of the stack.
      */
     display.update = function() {
-      this.value = model.getStackTop();
+      display.value = model.getStackTop();
+      console.log( "Display: " + model.getStackTop() );
     };
+
+    display.update();
 
     /* Append the final table to the canvas */
     this.initController( btnbody );
