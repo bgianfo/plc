@@ -1,0 +1,10 @@
+(def Prog (rule-list EndMarker) )
+(def RuleList (#f))
+(def Rule (#f)
+(def OBody (#f))
+(def ABody (#f))
+(def SBody (#f))
+(def Term (#f))
+(def TermList (#f))
+(def LTerm (#f) )
+
