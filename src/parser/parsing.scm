@@ -6,10 +6,6 @@
   (require scheme/list)
   (provide parsePrologProg)
    
-  (define (parse-var input) #f)
-
-  (define (peek-term input) 'EndMarker)
-
   (define (parse-and-check input) 'EndMarker)
 
   ; Auxilary functions to treat a dotted cons as a pair:
@@ -41,6 +37,11 @@
   (define (parsePrologProg input)
     (parse-prog input))
  
+  ; Baby helper function
+  (define (peek-term input) 
+    (if (or (empty? input) (equal? (first input) (list))) '()
+      (second input)))
+
   ; Prog → RuleList $$
   (define (parse-prog input)
     (let ((parse-result (parse-rule-list input)))
@@ -54,12 +55,29 @@
   ; RuleList → Rule RuleList
   (define (parse-rule-list input) 
     (if (empty? input) '()
-      (let ((rule (parse-rule (fst input))) (rulelist (parse-reul-list (snd input))))
+      (let ((rule (parse-rule (fst input))) (rulelist (parse-rule-list (snd input))))
         (list rule rulelist))))
 
   ; Rule → Term.
   ; Rule → Term :- OBody.
   (define (parse-rule input)
+    (let ((parse-result (parse-term input)))
+      (if (not parse-result) #f
+        (let ((term (fst (parse-result))) (input (snd parse-result)))
+          (let ((next-token (peek-term input)))
+            (cond 
+              ((equal? next-token fullstop)
+                (pair (list 'Rule term fullstop) input))
+              ((equal? next-token colon-minus)
+                (let ((parse-check-res (parse-and-check colon-minus input)))
+                  (let ((col-min (fst parse-check-res)) (input (snd parse-check-res)))
+                    (let ((parse-o-body-res (parse-o-body input)))
+                      (if (not parse-o-body-res) #f 
+                        (let ((obody (fst parse-o-body-res)) (input (snd parse-o-body-res)))
+                          (let ((next-token (peek-term input)))
+                            (if (equal? next-token fullstop) #f
+                              (pair (list 'Rule term col-min obody fullstop))))))))))))))))
+
 
 
   ; ABody → SBody,ABody
@@ -71,14 +89,14 @@
           (let ((next-token (peek-term input)))
             (cond
               ((equal? next-token comma)
-                (let ((ptsc_res (parse-and-check semicolon input)))
-                  (let ((com (fst ptsc_res)) (inp (snd ptsc_res)))
+                (let ((parse-check-res (parse-and-check semicolon input)))
+                  (let ((com (fst parse-check-res)) (inp (snd parse-check-res)))
                     (let ((parse-a-body-res (parse-a-body inp)))
                       (if (not parse-a-body-res) #f          
                         (let ((abody (fst parse-a-body-res)) (inp (snd parse-a-body-res)))
-                          (pair (list 'OBody sbody com abody) inp)))))))
+                          (pair (list 'ABody sbody com abody) inp)))))))
               ((member next-token '(fullstop semicolon comma rparen))
-                (pair (list 'OBody sbody) input))
+                (pair (list 'ABody sbody) input))
               (else #f)))))))
 
   ; OBody → ABody;OBody
@@ -100,6 +118,7 @@
                 (pair (list 'OBody abody) input) )
               (else #f)))))))
 
+
   ; SBody → ( OBody )
   ; SBody → Term = Term
   ; SBody → !
@@ -107,4 +126,10 @@
   (define (parse-s-body input) #f)
   ;    (let ((term-parse-result (parse-term input)
 
+  ; Term → Atom
+  ; Term → Num
+  ; Term → Var
+  ; Term → Atom ( TermList )
+  ; Term → LTerm
+  (define (parse-term input) #f)
 )
