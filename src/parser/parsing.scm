@@ -1,34 +1,44 @@
+;; Brian Gianforcaro (bjg1955@rit.edu)
+;; Prolog parsing in scheme
 (module parsing mzscheme
 
-  (require "scanning.scm")  
+  (require "scanning.scm")
   (require scheme/list)
   (provide parsePrologProg)
   (define (parsePrologProg input)
-    (if (equal? (last input) 'EndMarker)
-      (cons '(Prog (RuleList) ) (last input)) 
-    #f))
+    (if (eq? (last input) end-marker) (append '(Prog (RuleList)) (list end-marker)) #f)
+    (cond
+      ((eq? (fst input) prolog-atom) (parse-a-body input))
+      ((eq? (fst input) var) (parse-var input))))
+
+  (define (parse-a-body input) #f)
+
+  (define (parse-var input) #f)
+
+  (define (peek-term input) 'EndMarker)
+
+  (define (parse-and-check input) 'EndMarker)
 
   ; Auxilary functions to treat a dotted cons as a pair:
   (define (pair x y) (cons x y))
   (define (fst p) (car p))
   (define (snd p) (cdr p))
 
-;  $$  	'EndMarker
-;  . 	'fullstop
-;  :- 	'colon-minus
-;  ; 	'semicolon
-;  , 	'comma
-;  ( 	'lparen
-;  ) 	'rparen
-;  = 	'equals
-;  ! 	'exclam
-;  Atom 	'Atom
-;  Num 	'Num
-;  Var 	'Var
-;  [ 	'lsqbrack
-;  ] 	'rsqbrack
-;  | 	'vertline
-  
+  (define end-marker  'EndMarker)     ;  $$  	
+  (define fullstop    'fullstop)      ;  . 	
+  (define colon-minus 'colon-minus)   ;  :- 	
+  (define semicolon   'semicolon)     ;  ; 	
+  (define comma       'comma)         ;  , 	
+  (define left-paren  'lparen)        ;  ( 	
+  (define right-paren 'rparen)        ;  ) 	
+  (define equals      'equals)        ;  = 	
+  (define exclamation 'exclam)        ;  ! 	
+  (define prolog-atom 'Atom)          ;  Atom 
+  (define num         'Num)           ;  Num 	
+  (define var         'Var)           ;  Var 	
+  (define lbrack      'lsqbrack)      ;  [ 	
+  (define rbrack      'rsqbrack)      ;  ] 	
+  (define pipe        'vertline)      ;  | 	
 
   ; There is one parsing function for each non-terminal in the grammar.
   ; Each such parsing function takes as input a stream of tokens and
@@ -37,31 +47,31 @@
 
   ; OBody --> ABody ; OBody
   ; OBody --> ABody
-  (define (parseOBody inp)
+  (define (parse-o-body inp)
     (let (; attempt to parse the required ABody
-          (pab_res (parseABody inp)) )
-      (if (not pab_res)   ; if parsing the ABody failed, 
-          #f              ; then parsing the OBody fails 
+          (pab_res (parse-a-body inp)) )
+      (if (not pab_res)   ; if parsing the ABody failed,
+          #f              ; then parsing the OBody fails
           ; otherwise, parsing the ABody succeeded
           (let (; extract the ABody parse tree
-                (abody (fst pab_res)) 
+                (abody (fst pab_res))
                 ; extract the remaining stream of tokens
                 (inp (snd pab_res)) )
             (let (; Peek at the next token
-                  (next_tok (peekTerminal inp)) )
+                  (next_tok (peek-term inp)) )
               (cond
                 (; if the next token is a ';',
                  ; then use the "OBody --> ABody ; OBody" production.
                  (equal? next_tok 'semicolon)
                  (let (; parse the ';' token;
                        ; must succeed given peek token
-                       (ptsc_res (parseAndCheckTerminal 'semicolon inp)) )
+                       (ptsc_res (parse-and-check 'semicolon inp)) )
                    (let (; extract the semicolon token
-                         (semicolon (fst ptsc_res)) 
+                         (semicolon (fst ptsc_res))
                          ; extract the remaining stream of tokens
                          (inp (snd ptsc_res)) )
                      (let (; Attempt to parse the OBody
-                           (pob_res (parseOBody inp)) )
+                           (pob_res (parse-o-body inp)) )
                        (if (not pob_res)   ; if parsing the OBody failed
                            #f              ; then parsing the OBody fails
                            ; otherwise, parsing the OBody succeeded
@@ -76,12 +86,12 @@
                                    inp)))))) )
                 (; if the next token is in Follow(OBody),
                  ; then use the "OBody --> ABody" production.
-                 (member next_tok '(fullstop semicolon comma rparen)) 
+                 (member next_tok '(fullstop semicolon comma rparen))
                  ; return result pair
                  (pair ; "OBody --> ABody" parse tree
-                       (list 'OBody abody) 
+                       (list 'OBody abody)
                        ; remaining input
-                       inp) ) 
+                       inp) )
                 (; otherwise, parsing the OBody fails
                  else #f)))))))
 
