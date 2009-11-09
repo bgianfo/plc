@@ -132,4 +132,13 @@
   ; Term → Atom ( TermList )
   ; Term → LTerm
   (define (parse-term input) #f)
+#|    (let ((term (fst input)) (input (snd input)))
+      (cond 
+        ((member term (list prolog-atom num var))
+          (pair (list 'Term term) input))
+        ((equals? 
+
+           |#
+            
+
 )
