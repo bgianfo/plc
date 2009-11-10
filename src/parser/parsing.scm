@@ -94,7 +94,7 @@
                       (if (not parse-a-body-res) #f
                         (let ((abody (fst parse-a-body-res)) (inp (snd parse-a-body-res)))
                           (pair (list 'ABody sbody com abody) inp)))))))
-              ((member next-token '(fullstop semicolon comma rparen))
+              ((member next-token '(fullstop semicolon comma right-paren))
                 (pair (list 'ABody sbody) input))
               (else #f)))))))
 
@@ -113,7 +113,7 @@
                       (if (not parse-o-body-res) #f
                         (let ((obody (fst parse-o-body-res)) (inp (snd parse-o-body-res)))
                           (pair (list 'OBody abody semicol obody) inp)))))))
-              ((member next-token '(fullstop semicolon comma rparen))
+              ((member next-token '(fullstop semicolon comma right-paren))
                 (pair (list 'OBody abody) input) )
               (else #f)))))))
 
@@ -127,12 +127,12 @@
       (cond 
         ((equal? first-tok exclamation)
           (pair (list 'SBody exclamation) (snd input)))
-        ((equal? first-tok lparen)
+        ((equal? first-tok left-paren)
           (let ((lp (fst input)) (input (snd input)))
             (let ((parse-result (parse-o-body input)))
               (if (not parse-result) #f
                 (let ((obody (fst parse-result)) (input (snd parse-result)))
-                  (if (not (equal? (peek-terminal input) rparen)) #f
+                  (if (not (equal? (peek-term input) right-paren)) #f
                     (let ((rp (fst input)) (input (snd input)))
                       (pair (list 'SBody lp obody rp) input))))))))
         (else 
@@ -155,9 +155,21 @@
     (let ((terminal (fst input)) (input (snd input)))
       (cond
         ((member terminal (list num var))
-          (pair (list 'Term term) input))
-        ((equals?))
-        (else #f))))
+          (pair (list 'Term terminal) input))
+        ((equal? prolog-atom terminal)
+          (let ((next-tok (peek-term input)))
+            (if (not (equal? next-tok left-paren))
+              (pair (list 'Term prolog-atom) input)
+              (let ((lp (fst input)) (input (snd input)))
+                (let ((parse-result (parse-termlist input)))
+                  (if (not parse-result) #f
+                    (let ((tlist (fst parse-result)) (input (snd parse-result)))
+                      (if (not (equal? (peek-term input) right-paren)) #f
+                        (pair (list 'Term terminal left-paren tlist right-paren) (snd input))))))))))
+        (else 
+          (let ((parse-result (parse-lterm input)))
+            (if (not parse-result) #f
+              (pair (list 'Term (fst parse-result)) (snd parse-result))))))))
 
 
   ; TermList → Term
