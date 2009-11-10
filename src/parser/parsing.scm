@@ -122,27 +122,47 @@
   ; SBody → Term = Term
   ; SBody → !
   ; SBody → Term
-  (define [parse-s-body input] #f)
-  ;    (let ((term-parse-result (parse-term input)
+  (define [parse-s-body input]
+    (let ((first-tok (peek-term input)))
+      (cond 
+        ((equal? first-tok exclamation)
+          (pair (list 'SBody exclamation) (snd input)))
+        ((equal? first-tok lparen)
+          (let ((lp (fst input)) (input (snd input)))
+            (let ((parse-result (parse-o-body input)))
+              (if (not parse-result) #f
+                (let ((obody (fst parse-result)) (input (snd parse-result)))
+                  (if (not (equal? (peek-terminal input) rparen)) #f
+                    (let ((rp (fst input)) (input (snd input)))
+                      (pair (list 'SBody lp obody rp) input))))))))
+        (else 
+          (let ((term-parse-result (parse-term input)))
+            (if (not term-parse-result) #f
+              (let ((term (fst term-parse-result)) (input (snd input)))
+                (if (not (equal? (peek-term input) equals))
+                  (pair (list 'SBody term) input)
+                  (let ((eq-tok (fst input)) (input (snd input)))
+                    (let ((parse-result (parse-term input)))
+                      (if (not parse-result) #f
+                        (pair (list 'SBody term eq-tok (fst parse-result)) (snd parse-result)))))))))))))
 
   ; Term → Atom
   ; Term → Num
   ; Term → Var
   ; Term → Atom ( TermList )
   ; Term → LTerm
-  (define [parse-term input] #f)
-#|    (let ((term (fst input)) (input (snd input)))
+  (define [parse-term input]
+    (let ((terminal (fst input)) (input (snd input)))
       (cond
-        ((member term (list prolog-atom num var))
+        ((member terminal (list num var))
           (pair (list 'Term term) input))
-        ((equals?
+        ((equals?))
+        (else #f))))
 
-           |#
 
-
-; TermList → Term
-; TermList → TermList , Term
- 
+  ; TermList → Term
+  ; TermList → TermList , Term
+   
   (define [parse-termlist input]
     (let ((parse-result-term (parse-term input)) (parse-result-tml (parse-termlist input)))
       (cond 
@@ -158,9 +178,9 @@
                       (pair (list 'TermList tlist com term) input))))))))
         (else #f))))
 
-; LTerm → [ ]
-; LTerm → [ TermList ]
-; LTerm → [ TermList | Term ]
+  ; LTerm → [ ]
+  ; LTerm → [ TermList ]
+  ; LTerm → [ TermList | Term ]
   (define [parse-lterm input]
     (let ((next-token (fst input)) (input (snd input)))
       (if (not (equal? next-token lbrack)) #f
