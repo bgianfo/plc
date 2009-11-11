@@ -75,13 +75,16 @@
   ; Rule → Term.
   ; Rule → Term :- OBody.
   (define [parse-rule input]
+    (display "parse-rule: ")
+    (display input)
+    (display "\n")
     (let ((parse-result (parse-term input)))
       (if (not parse-result) #f
-        (let ((term (fst (parse-result))) (input (snd parse-result)))
+        (let ((term (fst parse-result)) (input (snd parse-result)))
           (let ((next-token (peek-term input)))
             (cond
               ((equal? next-token fullstop)
-                (pair (list 'Rule term fullstop) input))
+                (pair (list 'Rule term fullstop) (snd input)))
               ((equal? next-token colon-minus)
                 (let ((parse-check-res (parse-and-check colon-minus input)))
                   (let ((col-min (fst parse-check-res)) (input (snd parse-check-res)))
@@ -165,6 +168,9 @@
   ; Term → Atom ( TermList )
   ; Term → LTerm
   (define [parse-term input]
+    ;(display "parse-term: ")
+    ;(display input)
+    ;(display "\n")
     (let ((terminal (fst input)) (input (snd input)))
       (cond
         ((member terminal (list num var))
