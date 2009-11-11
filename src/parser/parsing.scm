@@ -9,9 +9,12 @@
   (define [parse-and-check input] 'EndMarker)
 
   ; Auxilary functions to treat a dotted cons as a pair:
-  (define [pair x y] (cons x y))
-  (define [fst p] (car p))
-  (define [snd p] (cdr p))
+  (define [pair x y] 
+    (cons x y))
+  (define [fst p] 
+    (car p))
+  (define [snd p]
+    (cdr p))
 
   (define end-marker  'EndMarker)     ;  $$
   (define fullstop    'fullstop)      ;  .
@@ -39,25 +42,35 @@
 
   ; Baby helper function
   (define [peek-term input]
+    "grap the first character of the input"
     (fst input))
     ;(if (or (empty? input) (equal? (first input) (list))) '()
     ;  (second input)))
 
   ; Prog → RuleList $$
   (define [parse-prog input]
-    (let ((parse-result (parse-rule-list input)))
-      (if (not parse-result) #f
-        (let ((rulelist (fst parse-result)) (inp (snd parse-result)))
-          (let ((next-token (peek-term inp)))
-            (if (not (equal? next-token end-marker)) #f
-              (list 'Prog rulelist end-marker)))))))
+    (if (equal? (length input) 1)
+      (if (not (equal? (fst input) end-marker)) #f
+        (list 'Prog '(RuleList) 'EndMarker))
+      (let ((parse-result (parse-rule-list input)))
+        (if (not parse-result) #f
+          (let ((rulelist (fst parse-result)) (inp (snd parse-result)))
+            (let ((next-token (peek-term inp)))
+              (if (not (equal? next-token end-marker)) #f
+                (list 'Prog rulelist end-marker))))))))
 
   ; RuleList → ε
   ; RuleList → Rule RuleList
   (define [parse-rule-list input]
-    (if (empty? (fst input)) (pair '() (snd input))
-      (let ((rule (parse-rule (fst input))) (rulelist (parse-rule-list (snd input))))
-        (list rule rulelist))))
+    (if (empty? input) 
+      (pair (list 'RuleList) '())
+      (let ((rule (parse-rule input)))
+        (if (not rule) #f
+          (let ((input (snd input)))
+            (let ((parse-rl-res (parse-rule-list (first input))))
+              (if (not parse-rl-res) #f 
+                (let ((rule-l (fst parse-rl-res)) (input (snd parse-rl-res)))
+                  (pair (list rule rule-l) input)))))))))
 
   ; Rule → Term.
   ; Rule → Term :- OBody.
