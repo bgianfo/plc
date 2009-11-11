@@ -1,4 +1,4 @@
-;; Brian Gianforcaro (bjg1955@rit.edu)
+;; Author: Brian Gianforcaro (bjg1955@rit.edu)
 ;; Prolog parsing in scheme
 (module parsing mzscheme
 
@@ -39,8 +39,9 @@
  
   ; Baby helper function
   (define (peek-term input) 
-    (if (or (empty? input) (equal? (first input) (list))) '()
-      (second input)))
+    (fst input))
+    ;(if (or (empty? input) (equal? (first input) (list))) '()
+    ;  (second input)))
 
   ; Prog → RuleList $$
   (define (parse-prog input)
@@ -54,7 +55,8 @@
   ; RuleList → ε
   ; RuleList → Rule RuleList
   (define (parse-rule-list input) 
-    (if (empty? input) '()
+    (if (empty? (fst input))
+      (let (    (pair '() 
       (let ((rule (parse-rule (fst input))) (rulelist (parse-rule-list (snd input))))
         (list rule rulelist))))
 
@@ -77,8 +79,6 @@
                           (let ((next-token (peek-term input)))
                             (if (equal? next-token fullstop) #f
                               (pair (list 'Rule term col-min obody fullstop))))))))))))))))
-
-
 
   ; ABody → SBody,ABody
   ; ABody → SBody
