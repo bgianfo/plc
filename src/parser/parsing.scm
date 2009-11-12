@@ -166,14 +166,14 @@
   ; Term → Atom ( TermList ) ✓
   ; Term → LTerm
   (define [parse-term input]
-    (let ([terminal (get-result input)] [input (get-next input)])
+    (let ([term (get-result input)] [input (get-next input)])
       (cond
-        ((member terminal punc) #f)
-        ((member terminal (list num var))
-          (pair (list 'Term terminal) input))
-        ((equal? prolog-atom terminal)
+        ((member term punc) #f)
+        ((member term (list num var))
+            (pair (list 'Term term) input))
+        ((equal? prolog-atom term)
           (if (empty? input)
-            (pair (list 'Term terminal) input)
+            (pair (list 'Term term) input)
             (let ([next-tok (peek-term input)])
               (if (not (equal? next-tok left-paren))
                 (pair (list 'Term prolog-atom) input)
@@ -182,7 +182,7 @@
                     (if (not parse-result) #f
                       (let ([tlist (get-result parse-result)] [input (get-next parse-result)])
                         (if (not (equal? (peek-term input) right-paren)) #f
-                          (pair (list 'Term terminal left-paren tlist right-paren) (get-next input)))))))))))
+                          (pair (list 'Term term left-paren tlist right-paren) (get-next input)))))))))))
         (else 
           (let ([parse-result (parse-lterm input)])
             (if (not parse-result) #f
@@ -193,19 +193,18 @@
   ; TermList → TermList , Term
    
   (define [parse-termlist input]
-    (let ([parse-result-term (parse-term input)] [parse-result-tml (parse-termlist input)])
-      (cond 
-        (parse-result-term 
-          (pair (list 'TermList (get-result parse-result-term)) (get-next parse-result-term)))
-        (parse-result-tml
-          (let ([tlist (get-result parse-result-tml)] [input (get-next parse-result-tml)])
-            (if (not (equal? (peek-term input) comma)) #f
-              (let ([com (get-result input)] [input (get-next input)])
-                (let ([parse-result (parse-term input)])
-                  (if (not parse-result) #f
-                    (let ([term (get-result parse-result)] [input (get-next parse-result)])
-                      (pair (list 'TermList tlist com term) input))))))))
-        (else #f))))
+    (let ([res-term (parse-term input)]) 
+      (if res-term
+        (pair (list 'TermList (get-result res-term)) (get-next res-term))
+        (let ([res-tml (parse-termlist input)])
+          (if (res-tml) #f
+            (let ([tlist (get-result res-tml)] [input (get-next res-tml)])
+              (if (not (equal? (peek-term input) comma)) #f
+                (let ([com (get-result input)] [input (get-next input)])
+                  (let ([parse-result (parse-term input)])
+                    (if (not parse-result) #f
+                      (let ([term (get-result parse-result)] [input (get-next parse-result)])
+                        (pair (list 'TermList tlist com term) input))))))))))))
 
   ; LTerm → [ ]
   ; LTerm → [ TermList ]
@@ -232,7 +231,12 @@
 
 
   (trace parse-prog)
+  (trace parse-a-body)
+  (trace parse-o-body)
+  (trace parse-s-body)
+  (trace parse-termlist)
   (trace parse-term)
   (trace parse-rule-list)
   (trace parse-rule)
+  (trace parse-lterm)
 )
