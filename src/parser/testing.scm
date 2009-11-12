@@ -384,7 +384,7 @@
         (output (caddr test)))
     (if (equal? (parsePrologProg input) output)
         (display (string-append "Test " name " passed.\n"))
-        (display (string-append "Test " name " failed.\n")))))
+        (error (string-append "Test " name " failed.\n")))))
 (define (run-tests) (for-each run-test tests))
 
 (run-tests)
