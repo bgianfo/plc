@@ -193,18 +193,18 @@
   ; TermList → TermList , Term
    
   (define [parse-termlist input]
-    (let ([res-term (parse-term input)]) 
-      (if res-term
-        (pair (list 'TermList (get-result res-term)) (get-next res-term))
-        (let ([res-tml (parse-termlist input)])
-          (if (res-tml) #f
-            (let ([tlist (get-result res-tml)] [input (get-next res-tml)])
-              (if (not (equal? (peek-term input) comma)) #f
-                (let ([com (get-result input)] [input (get-next input)])
-                  (let ([parse-result (parse-term input)])
-                    (if (not parse-result) #f
-                      (let ([term (get-result parse-result)] [input (get-next parse-result)])
-                        (pair (list 'TermList tlist com term) input))))))))))))
+    (let ([res-tml (parse-termlist input)])
+      (if (not res-tml) 
+        (let ([res-term (parse-term input)]) 
+          (if (not res-term) #f
+            (pair (list 'TermList (get-result res-term)) (get-next res-term))))
+        (let ([tlist (get-result res-tml)] [input (get-next res-tml)])
+          (if (not (equal? (peek-term input) comma)) #f
+            (let ([com (get-result input)] [input (get-next input)])
+              (let ([parse-result (parse-term input)])
+                (if (not parse-result) #f
+                  (let ([term (get-result parse-result)] [input (get-next parse-result)])
+                    (pair (list 'TermList tlist com term) input))))))))))
 
   ; LTerm → [ ]
   ; LTerm → [ TermList ]
