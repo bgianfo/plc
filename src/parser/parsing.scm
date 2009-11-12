@@ -37,6 +37,8 @@
   (define rbrack      'rsqbrack)      ;  ]
   (define pipe        'vertline)      ;  |
 
+  (define punc 
+    (list exclamation pipe rbrack lbrack equals right-paren left-paren comma fullstop colon-minus))
   ; There is one parsing function for each non-terminal in the grammar.
   ; Each such parsing function takes as input a stream of tokens and
   ; returns as a result either: a pair consisting of a parse tree rooted
@@ -172,6 +174,7 @@
   (define [parse-term input]
     (let ((terminal (get-result input)) (input (get-next input)))
       (cond
+        ((member terminal punc) #f)
         ((member terminal (list num var))
           (pair (list 'Term terminal) input))
         ((equal? prolog-atom terminal)
