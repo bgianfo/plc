@@ -86,20 +86,21 @@
     (let ((parse-result (parse-term input)))
       (if (not parse-result) #f
         (let ((term (get-result parse-result)) (input (get-next parse-result)))
-          (let ((next-token (peek-term input)))
-            (cond
-              ((equal? next-token fullstop)
-                (pair (list 'Rule term fullstop) (get-next input)))
-              ((equal? next-token colon-minus)
-                  (let ((col-min next-token) (input (get-next input)))
-                    (let ((parse-o-body-res (parse-o-body input)))
-                      (if (not parse-o-body-res) #f
-                        (let ((obody (get-result parse-o-body-res)) (input (get-next parse-o-body-res)))
-                          (let ((next-token (peek-term input)))
-                            (if (equal? next-token fullstop) #f
-                              ; XXX: Might  need to change this back to empty list
-                              (let ((input (get-next input)))
-                                (pair (list 'Rule term col-min obody fullstop) input)))))))))))))))
+          (if (empty? input) #f
+            (let ((next-token (peek-term input)))
+              (cond
+                ((equal? next-token fullstop)
+                  (pair (list 'Rule term fullstop) (get-next input)))
+                ((equal? next-token colon-minus)
+                    (let ((col-min next-token) (input (get-next input)))
+                      (let ((parse-o-body-res (parse-o-body input)))
+                        (if (not parse-o-body-res) #f
+                          (let ((obody (get-result parse-o-body-res)) (input (get-next parse-o-body-res)))
+                            (let ((next-token (peek-term input)))
+                              (if (equal? next-token fullstop) #f
+                                ; XXX: Might  need to change this back to empty list
+                                (let ((input (get-next input)))
+                                  (pair (list 'Rule term col-min obody fullstop) input))))))))))))))))
 
   ; ABody → SBody,ABody
   ; ABody → SBody
@@ -178,15 +179,17 @@
         ((member terminal (list num var))
           (pair (list 'Term terminal) input))
         ((equal? prolog-atom terminal)
-          (let ((next-tok (peek-term input)))
-            (if (not (equal? next-tok left-paren))
-              (pair (list 'Term prolog-atom) input)
-              (let ((lp (get-result input)) (input (get-next input)))
-                (let ((parse-result (parse-termlist input)))
-                  (if (not parse-result) #f
-                    (let ((tlist (get-result parse-result)) (input (get-next parse-result)))
-                      (if (not (equal? (peek-term input) right-paren)) #f
-                        (pair (list 'Term terminal left-paren tlist right-paren) (get-next input))))))))))
+          (if (empty? input)
+            (pair (list 'Term terminal) input)
+            (let ((next-tok (peek-term input)))
+              (if (not (equal? next-tok left-paren))
+                (pair (list 'Term prolog-atom) input)
+                (let ((lp (get-result input)) (input (get-next input)))
+                  (let ((parse-result (parse-termlist input)))
+                    (if (not parse-result) #f
+                      (let ((tlist (get-result parse-result)) (input (get-next parse-result)))
+                        (if (not (equal? (peek-term input) right-paren)) #f
+                          (pair (list 'Term terminal left-paren tlist right-paren) (get-next input)))))))))))
         (else 
           (let ((parse-result (parse-lterm input)))
             (if (not parse-result) #f
