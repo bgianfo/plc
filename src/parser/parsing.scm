@@ -179,6 +179,11 @@
                 (pair (list 'Term prolog-atom) input)
                 (let ([lp (get-result input)] [input (get-next input)])
                   (let ([parse-result (parse-termlist input)])
+                    (display "\n")
+                    (display "term: ")
+                    (display parse-result)
+                    (display "\n")
+                    (display "\n")
                     (if (not parse-result) #f
                       (let ([tlist (get-result parse-result)] [input (get-next parse-result)])
                         (if (not (equal? (peek-term input) right-paren)) #f
