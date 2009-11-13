@@ -4,7 +4,8 @@
 
   (require "scanning.scm")
   (require scheme/list)
-  (require mzlib/trace)
+  ;(require mzlib/trace)
+  (require errortrace)
   (provide parsePrologProg)
 
   ; Auxilary functions to treat a dotted cons as a pair:
@@ -66,11 +67,13 @@
     (if (empty? input) (pair (list 'RuleList) '())
       (let ([res (parse-rule input)])
         (if (not res) #f
-          (let ([rule (get-result res)] [input (get-next res)])
-            (let ([list-res (parse-rule-list input)])
-              (if (not list-res) #f 
-                (let ([rule-list (get-result list-res)] [input (get-next list-res)])
-                  (pair (list 'RuleList rule rule-list) input)))))))))
+          (if (equal? (length res) 1)
+            (pair (list 'RuleList (get-result res) '(RuleList)) '() )
+            (let ([rule (get-result res)] [input (get-next res)])
+              (let ([list-res (parse-rule-list input)])
+                (if (not list-res) #f 
+                  (let ([rule-list (get-result list-res)] [input (get-next list-res)])
+                    (pair (list 'RuleList rule rule-list) input))))))))))
 
 
   ; Rule → Term.
@@ -78,22 +81,23 @@
   (define [parse-rule input]
     (let ([parse-result (parse-term input)])
       (if (not parse-result) #f
-        (let ([term (get-result parse-result)] [input (get-next parse-result)])
+        (let ([term (get-result parse-result)] [input (get-next parse-result)]) ; *
           (if (empty? input) #f
             (let ([next-token (peek-term input)])
               (cond
                 ((equal? next-token fullstop)
-                  (pair (list 'Rule term fullstop) (get-next input)))
+                  (pair (list 'Rule term fullstop) (get-next input)))           ; *
                 ((equal? next-token colon-minus)
-                    (let ([col-min next-token] [input (get-next input)])
-                      (let ([parse-o-body-res (parse-o-body input)])
-                        (if (not parse-o-body-res) #f
-                          (let ([obody (get-result parse-o-body-res)] [input (get-next parse-o-body-res)])
-                            (let ([next-token (peek-term input)])
-                              (if (equal? next-token fullstop) #f
-                                ; XXX: Might  need to change this back to empty list
-                                (let ([input (get-next input)])
-                                  (pair (list 'Rule term col-min obody fullstop) input))))))))))))))))
+                  (let ([col-min next-token] [input (get-next input)])        ; *
+                    (let ([parse-o-body-res (parse-o-body input)])
+                      (if (not parse-o-body-res) #f
+                        (let ([obody (get-result parse-o-body-res)] [input (get-next parse-o-body-res)]) ; *
+                          (let ([next-token (peek-term input)])
+                            (if (not (equal? next-token fullstop)) #f
+                              ; XXX: Might  need to change this back to empty list
+                              (let ([input (get-next input)])                                            ; *
+                                (pair (list 'Rule term col-min obody fullstop) input)))))))))
+                  (else #f))))))))
 
   ; ABody → SBody,ABody
   ; ABody → SBody
@@ -160,57 +164,61 @@
                       (if (not parse-result) #f
                         (pair (list 'SBody term eq-tok (get-result parse-result)) (get-next parse-result)))))))))))))
 
+(define (parseTermListAux inp last_pt)
+  (if (equal? (car inp) 'comma)
+    (let* ([pt_rec (parse-term (cdr inp))] [term (get-result pt_res)] [inp (get-next pt_res)])
+      (parseTermListAux inp (list 'TermList term 'comma last_pt)))
+    (pair last_pt inp)))
+
+
+
   ; Term → Atom ✓
   ; Term → Num  ✓
   ; Term → Var  ✓
   ; Term → Atom ( TermList ) ✓
   ; Term → LTerm
   (define [parse-term input]
-    (let ([term (get-result input)] [input (get-next input)])
-      (cond
-        ((member term punc) #f)
-        ((member term (list num var))
+    (display "\n")
+    (display input)
+    (display "\n")
+    (if (empty? input) #f
+      (let ([term (get-result input)] [input (get-next input)])
+        (cond
+          ((member term punc) #f)
+          ((member term (list num var))
             (pair (list 'Term term) input))
-        ((equal? prolog-atom term)
-          (if (empty? input)
-            (pair (list 'Term term) input)
-            (let ([next-tok (peek-term input)])
-              (if (not (equal? next-tok left-paren))
-                (pair (list 'Term prolog-atom) input)
-                (let ([lp (get-result input)] [input (get-next input)])
-                  (let ([parse-result (parse-termlist input)])
-                    (display "\n")
-                    (display "term: ")
-                    (display parse-result)
-                    (display "\n")
-                    (display "\n")
-                    (if (not parse-result) #f
-                      (let ([tlist (get-result parse-result)] [input (get-next parse-result)])
-                        (if (not (equal? (peek-term input) right-paren)) #f
-                          (pair (list 'Term term left-paren tlist right-paren) (get-next input)))))))))))
-        (else 
-          (let ([parse-result (parse-lterm input)])
-            (if (not parse-result) #f
-              (pair (list 'Term (get-result parse-result)) (get-next parse-result))))))))
+          ((equal? prolog-atom term)
+            (if (empty? input)
+              (pair (list 'Term term) input)
+              (let ([next-tok (peek-term input)])
+                (if (not (equal? next-tok left-paren))
+                  (pair (list 'Term prolog-atom) input)
+                  (let ([lp (get-result input)] [input (get-next input)])
+                    (let ([parse-result (parse-termlist input)])
+                      (if (not parse-result) #f
+                        (let ([tlist (get-result parse-result)] [input (get-next parse-result)])
+                          (if (not (equal? (peek-term input) right-paren)) #f
+                            (pair (list 'Term term left-paren tlist right-paren) (get-next input)))))))))))
+          (else 
+            (let ([parse-result (parse-lterm input)])
+              (if (not parse-result) #f
+                (pair (list 'Term (get-result parse-result)) (get-next parse-result)))))))))
 
 
   ; TermList → Term
   ; TermList → TermList , Term
    
   (define [parse-termlist input]
-    (let ([res-tml (parse-termlist input)])
-      (if (not res-tml) 
-        (let ([res-term (parse-term input)]) 
-          (if (not res-term) #f
-            (pair (list 'TermList (get-result res-term)) (get-next res-term))))
-        (let ([tlist (get-result res-tml)] [input (get-next res-tml)])
-          (if (not (equal? (peek-term input) comma)) #f
-            (let ([com (get-result input)] [input (get-next input)])
-              (let ([parse-result (parse-term input)])
-                (if (not parse-result) #f
-                  (let ([term (get-result parse-result)] [input (get-next parse-result)])
-                    (pair (list 'TermList tlist com term) input))))))))))
-
+    (let ([res-term (parse-term input)]) 
+      (if (and res-term (not (equal? (peek-term (get-next res-term)) comma)))
+        (pair (list 'TermList (get-result res-term)) (get-next res-term))
+        (let ([res-tml (parse-termlist (get-next input))])
+          (if (not res-tml) #f
+            (let ([tlist (get-result res-tml)] [input (get-next res-tml)])
+              (if (equal? (peek-term input) comma) #f
+                (if (not res-term)
+                  (pair (list 'TermList tlist) input)
+                  (pair (append tlist '(comma) (list(get-result res-term))) input)))))))))
   ; LTerm → [ ]
   ; LTerm → [ TermList ]
   ; LTerm → [ TermList | Term ]
@@ -235,13 +243,13 @@
 
 
 
-  (trace parse-prog)
-  (trace parse-a-body)
-  (trace parse-o-body)
-  (trace parse-s-body)
-  (trace parse-termlist)
-  (trace parse-term)
-  (trace parse-rule-list)
-  (trace parse-rule)
-  (trace parse-lterm)
+;(trace parse-prog)
+;(trace parse-a-body)
+;(trace parse-o-body)
+;(trace parse-s-body)
+;(trace parse-termlist)
+;(trace parse-term)
+;(trace parse-rule-list)
+;(trace parse-rule)
+;(trace parse-lterm)
 )

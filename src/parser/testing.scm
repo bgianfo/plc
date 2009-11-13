@@ -90,7 +90,22 @@
   (let (
         (test10_name "test10")
         (test10_input '(Atom lparen Var comma Var comma Var rparen fullstop EndMarker))
-        (test10_output '(Prog (RuleList (Rule (Term Atom lparen (TermList (TermList (TermList (Term Var)) comma (Term Var)) comma (Term Var)) rparen) fullstop) (RuleList)) EndMarker))
+        (test10_output 
+          '(Prog
+             (RuleList
+               (Rule
+                 (Term 
+                  Atom
+                  lparen 
+                  (TermList 
+                    (TermList 
+                      (TermList (Term Var))
+                      comma (Term Var))
+                    comma (Term Var))
+                  rparen) 
+                 fullstop) 
+               (RuleList))
+             EndMarker))
        )
     (list test10_name test10_input test10_output)))
 
@@ -350,11 +365,11 @@
  test09
  test10
  test11
- ;test12
+ test12
  test13
  test14
  test15
- ;test16
+; test16
  ;test17
  ;test18
  ;test19
@@ -375,7 +390,7 @@
  test34
  test35
  ;test98
- test99
+ ;test99
 ))
 
 (define (run-test test)
