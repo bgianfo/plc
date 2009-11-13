@@ -1,23 +1,1291 @@
-
-|(parse-prog (Atom lparen Atom lparen Num rparen comma Atom lparen Atom comma Atom rparen comma Atom lparen Var comma Var comma Var rparen comma Atom lparen Atom lparen Atom lparen Atom lparen Atom rparen rparen rparen rparen rparen fullstop EndMarker))
-| (parse-rule-list (Atom lparen Atom lparen Num rparen comma Atom lparen Atom comma Atom rparen comma Atom lparen Var comma Var comma Var rparen comma Atom lparen Atom lparen Atom lparen Atom lparen Atom rparen rparen rparen rparen rparen fullstop))
-| |(parse-rule (Atom lparen Atom lparen Num rparen comma Atom lparen Atom comma Atom rparen comma Atom lparen Var comma Var comma Var rparen comma Atom lparen Atom lparen Atom lparen Atom lparen Atom rparen rparen rparen rparen rparen fullstop))
-| | (parse-term (Atom lparen Atom lparen Num rparen comma Atom lparen Atom comma Atom rparen comma Atom lparen Var comma Var comma Var rparen comma Atom lparen Atom lparen Atom lparen Atom lparen Atom rparen rparen rparen rparen rparen fullstop))
-| | |(parse-termlist (Atom lparen Num rparen comma Atom lparen Atom comma Atom rparen comma Atom lparen Var comma Var comma Var rparen comma Atom lparen Atom lparen Atom lparen Atom lparen Atom rparen rparen rparen rparen rparen fullstop))
-| | | (parse-term (Atom lparen Num rparen comma Atom lparen Atom comma Atom rparen comma Atom lparen Var comma Var comma Var rparen comma Atom lparen Atom lparen Atom lparen Atom lparen Atom rparen rparen rparen rparen rparen fullstop))
-| | | |(parse-termlist (Num rparen comma Atom lparen Atom comma Atom rparen comma Atom lparen Var comma Var comma Var rparen comma Atom lparen Atom lparen Atom lparen Atom lparen Atom rparen rparen rparen rparen rparen fullstop))
-| | | | (parse-term (Num rparen comma Atom lparen Atom comma Atom rparen comma Atom lparen Var comma Var comma Var rparen comma Atom lparen Atom lparen Atom lparen Atom lparen Atom rparen rparen rparen rparen rparen fullstop))
-| | | | ((Term Num) rparen comma Atom lparen Atom comma Atom rparen comma Atom lparen Var comma Var comma Var rparen comma Atom lparen Atom lparen Atom lparen Atom lparen Atom rparen rparen rparen rparen rparen fullstop)
-| | | |((TermList (Term Num)) rparen comma Atom lparen Atom comma Atom rparen comma Atom lparen Var comma Var comma Var rparen comma Atom lparen Atom lparen Atom lparen Atom lparen Atom rparen rparen rparen rparen rparen fullstop)
-| | | ((Term Atom lparen (TermList (Term Num)) rparen) comma Atom lparen Atom comma Atom rparen comma Atom lparen Var comma Var comma Var rparen comma Atom lparen Atom lparen Atom lparen Atom lparen Atom rparen rparen rparen rparen rparen fullstop)
-| | | (parse-termlist (lparen Num rparen comma Atom lparen Atom comma Atom rparen comma Atom lparen Var comma Var comma Var rparen comma Atom lparen Atom lparen Atom lparen Atom lparen Atom rparen rparen rparen rparen rparen fullstop))
-| | | |(parse-term (lparen Num rparen comma Atom lparen Atom comma Atom rparen comma Atom lparen Var comma Var comma Var rparen comma Atom lparen Atom lparen Atom lparen Atom lparen Atom rparen rparen rparen rparen rparen fullstop))
+|(parse-prog (EndMarker))
+|(Prog (RuleList) EndMarker)
+Test test01 passed.
+|(parse-prog (Atom fullstop EndMarker))
+| (parse-rule-list (Atom fullstop))
+| |(parse-rule (Atom fullstop))
+| | (parse-term (Atom fullstop))
+| | ((Term Atom) fullstop)
+| |((Rule (Term Atom) fullstop))
+| ((RuleList (Rule (Term Atom) fullstop) (RuleList)))
+|(Prog (RuleList (Rule (Term Atom) fullstop) (RuleList)) EndMarker)
+Test test02 passed.
+|(parse-prog (Atom fullstop Atom fullstop EndMarker))
+| (parse-rule-list (Atom fullstop Atom fullstop))
+| |(parse-rule (Atom fullstop Atom fullstop))
+| | (parse-term (Atom fullstop Atom fullstop))
+| | ((Term Atom) fullstop Atom fullstop)
+| |((Rule (Term Atom) fullstop) Atom fullstop)
+| |(parse-rule-list (Atom fullstop))
+| | (parse-rule (Atom fullstop))
+| | |(parse-term (Atom fullstop))
+| | |((Term Atom) fullstop)
+| | ((Rule (Term Atom) fullstop))
+| |((RuleList (Rule (Term Atom) fullstop) (RuleList)))
+| ((RuleList
+    (Rule (Term Atom) fullstop)
+    (RuleList (Rule (Term Atom) fullstop) (RuleList))))
+|(Prog
+  (RuleList
+   (Rule (Term Atom) fullstop)
+   (RuleList (Rule (Term Atom) fullstop) (RuleList)))
+  EndMarker)
+Test test03 passed.
+|(parse-prog (fullstop EndMarker))
+| (parse-rule-list (fullstop))
+| |(parse-rule (fullstop))
+| | (parse-term (fullstop))
+| | #f
+| |#f
+| #f
+|#f
+Test test04 passed.
+|(parse-prog (Atom fullstop Atom EndMarker))
+| (parse-rule-list (Atom fullstop Atom))
+| |(parse-rule (Atom fullstop Atom))
+| | (parse-term (Atom fullstop Atom))
+| | ((Term Atom) fullstop Atom)
+| |((Rule (Term Atom) fullstop) Atom)
+| |(parse-rule-list (Atom))
+| | (parse-rule (Atom))
+| | |(parse-term (Atom))
+| | |((Term Atom))
+| | #f
+| |#f
+| #f
+|#f
+Test test05 passed.
+|(parse-prog
+  (Atom
+   fullstop
+   Atom
+   fullstop
+   Atom
+   fullstop
+   Atom
+   fullstop
+   Atom
+   fullstop
+   Atom
+   fullstop
+   Atom
+   fullstop
+   EndMarker))
+| (parse-rule-list
+   (Atom
+    fullstop
+    Atom
+    fullstop
+    Atom
+    fullstop
+    Atom
+    fullstop
+    Atom
+    fullstop
+    Atom
+    fullstop
+    Atom
+    fullstop))
+| |(parse-rule
+    (Atom
+     fullstop
+     Atom
+     fullstop
+     Atom
+     fullstop
+     Atom
+     fullstop
+     Atom
+     fullstop
+     Atom
+     fullstop
+     Atom
+     fullstop))
+| | (parse-term
+     (Atom
+      fullstop
+      Atom
+      fullstop
+      Atom
+      fullstop
+      Atom
+      fullstop
+      Atom
+      fullstop
+      Atom
+      fullstop
+      Atom
+      fullstop))
+| | ((Term Atom)
+     fullstop
+     Atom
+     fullstop
+     Atom
+     fullstop
+     Atom
+     fullstop
+     Atom
+     fullstop
+     Atom
+     fullstop
+     Atom
+     fullstop)
+| |((Rule (Term Atom) fullstop)
+    Atom
+    fullstop
+    Atom
+    fullstop
+    Atom
+    fullstop
+    Atom
+    fullstop
+    Atom
+    fullstop
+    Atom
+    fullstop)
+| |(parse-rule-list
+    (Atom
+     fullstop
+     Atom
+     fullstop
+     Atom
+     fullstop
+     Atom
+     fullstop
+     Atom
+     fullstop
+     Atom
+     fullstop))
+| | (parse-rule
+     (Atom
+      fullstop
+      Atom
+      fullstop
+      Atom
+      fullstop
+      Atom
+      fullstop
+      Atom
+      fullstop
+      Atom
+      fullstop))
+| | |(parse-term
+      (Atom
+       fullstop
+       Atom
+       fullstop
+       Atom
+       fullstop
+       Atom
+       fullstop
+       Atom
+       fullstop
+       Atom
+       fullstop))
+| | |((Term Atom)
+      fullstop
+      Atom
+      fullstop
+      Atom
+      fullstop
+      Atom
+      fullstop
+      Atom
+      fullstop
+      Atom
+      fullstop)
+| | ((Rule (Term Atom) fullstop)
+     Atom
+     fullstop
+     Atom
+     fullstop
+     Atom
+     fullstop
+     Atom
+     fullstop
+     Atom
+     fullstop)
+| | (parse-rule-list
+     (Atom fullstop Atom fullstop Atom fullstop Atom fullstop Atom fullstop))
+| | |(parse-rule
+      (Atom fullstop Atom fullstop Atom fullstop Atom fullstop Atom fullstop))
+| | | (parse-term
+       (Atom fullstop Atom fullstop Atom fullstop Atom fullstop Atom fullstop))
+| | | ((Term Atom)
+       fullstop
+       Atom
+       fullstop
+       Atom
+       fullstop
+       Atom
+       fullstop
+       Atom
+       fullstop)
+| | |((Rule (Term Atom) fullstop)
+      Atom
+      fullstop
+      Atom
+      fullstop
+      Atom
+      fullstop
+      Atom
+      fullstop)
+| | |(parse-rule-list
+      (Atom fullstop Atom fullstop Atom fullstop Atom fullstop))
+| | | (parse-rule (Atom fullstop Atom fullstop Atom fullstop Atom fullstop))
+| | | |(parse-term (Atom fullstop Atom fullstop Atom fullstop Atom fullstop))
+| | | |((Term Atom) fullstop Atom fullstop Atom fullstop Atom fullstop)
+| | | ((Rule (Term Atom) fullstop) Atom fullstop Atom fullstop Atom fullstop)
+| | | (parse-rule-list (Atom fullstop Atom fullstop Atom fullstop))
+| | | |(parse-rule (Atom fullstop Atom fullstop Atom fullstop))
+| | | | (parse-term (Atom fullstop Atom fullstop Atom fullstop))
+| | | | ((Term Atom) fullstop Atom fullstop Atom fullstop)
+| | | |((Rule (Term Atom) fullstop) Atom fullstop Atom fullstop)
+| | | |(parse-rule-list (Atom fullstop Atom fullstop))
+| | | | (parse-rule (Atom fullstop Atom fullstop))
+| | | | |(parse-term (Atom fullstop Atom fullstop))
+| | | | |((Term Atom) fullstop Atom fullstop)
+| | | | ((Rule (Term Atom) fullstop) Atom fullstop)
+| | | | (parse-rule-list (Atom fullstop))
+| | | | |(parse-rule (Atom fullstop))
+| | | | | (parse-term (Atom fullstop))
+| | | | | ((Term Atom) fullstop)
+| | | | |((Rule (Term Atom) fullstop))
+| | | | ((RuleList (Rule (Term Atom) fullstop) (RuleList)))
+| | | |((RuleList
+         (Rule (Term Atom) fullstop)
+         (RuleList (Rule (Term Atom) fullstop) (RuleList))))
+| | | ((RuleList
+        (Rule (Term Atom) fullstop)
+        (RuleList
+         (Rule (Term Atom) fullstop)
+         (RuleList (Rule (Term Atom) fullstop) (RuleList)))))
+| | |((RuleList
+       (Rule (Term Atom) fullstop)
+       (RuleList
+        (Rule (Term Atom) fullstop)
+        (RuleList
+         (Rule (Term Atom) fullstop)
+         (RuleList (Rule (Term Atom) fullstop) (RuleList))))))
+| | ((RuleList
+      (Rule (Term Atom) fullstop)
+      (RuleList
+       (Rule (Term Atom) fullstop)
+       (RuleList
+        (Rule (Term Atom) fullstop)
+        (RuleList
+         (Rule (Term Atom) fullstop)
+         (RuleList (Rule (Term Atom) fullstop) (RuleList)))))))
+| |((RuleList
+     (Rule (Term Atom) fullstop)
+     (RuleList
+      (Rule (Term Atom) fullstop)
+      (RuleList
+       (Rule (Term Atom) fullstop)
+       (RuleList
+        (Rule (Term Atom) fullstop)
+        (RuleList
+         (Rule (Term Atom) fullstop)
+         (RuleList (Rule (Term Atom) fullstop) (RuleList))))))))
+| ((RuleList
+    (Rule (Term Atom) fullstop)
+    (RuleList
+     (Rule (Term Atom) fullstop)
+     (RuleList
+      (Rule (Term Atom) fullstop)
+      (RuleList
+       (Rule (Term Atom) fullstop)
+       (RuleList
+        (Rule (Term Atom) fullstop)
+        (RuleList
+         (Rule (Term Atom) fullstop)
+         (RuleList (Rule (Term Atom) fullstop) (RuleList)))))))))
+|(Prog
+  (RuleList
+   (Rule (Term Atom) fullstop)
+   (RuleList
+    (Rule (Term Atom) fullstop)
+    (RuleList
+     (Rule (Term Atom) fullstop)
+     (RuleList
+      (Rule (Term Atom) fullstop)
+      (RuleList
+       (Rule (Term Atom) fullstop)
+       (RuleList
+        (Rule (Term Atom) fullstop)
+        (RuleList (Rule (Term Atom) fullstop) (RuleList))))))))
+  EndMarker)
+Test test06 passed.
+|(parse-prog
+  (Num
+   fullstop
+   Num
+   fullstop
+   Num
+   fullstop
+   Num
+   fullstop
+   Num
+   fullstop
+   Num
+   fullstop
+   EndMarker))
+| (parse-rule-list
+   (Num
+    fullstop
+    Num
+    fullstop
+    Num
+    fullstop
+    Num
+    fullstop
+    Num
+    fullstop
+    Num
+    fullstop))
+| |(parse-rule
+    (Num
+     fullstop
+     Num
+     fullstop
+     Num
+     fullstop
+     Num
+     fullstop
+     Num
+     fullstop
+     Num
+     fullstop))
+| | (parse-term
+     (Num
+      fullstop
+      Num
+      fullstop
+      Num
+      fullstop
+      Num
+      fullstop
+      Num
+      fullstop
+      Num
+      fullstop))
+| | ((Term Num)
+     fullstop
+     Num
+     fullstop
+     Num
+     fullstop
+     Num
+     fullstop
+     Num
+     fullstop
+     Num
+     fullstop)
+| |((Rule (Term Num) fullstop)
+    Num
+    fullstop
+    Num
+    fullstop
+    Num
+    fullstop
+    Num
+    fullstop
+    Num
+    fullstop)
+| |(parse-rule-list
+    (Num fullstop Num fullstop Num fullstop Num fullstop Num fullstop))
+| | (parse-rule
+     (Num fullstop Num fullstop Num fullstop Num fullstop Num fullstop))
+| | |(parse-term
+      (Num fullstop Num fullstop Num fullstop Num fullstop Num fullstop))
+| | |((Term Num) fullstop Num fullstop Num fullstop Num fullstop Num fullstop)
+| | ((Rule (Term Num) fullstop)
+     Num
+     fullstop
+     Num
+     fullstop
+     Num
+     fullstop
+     Num
+     fullstop)
+| | (parse-rule-list (Num fullstop Num fullstop Num fullstop Num fullstop))
+| | |(parse-rule (Num fullstop Num fullstop Num fullstop Num fullstop))
+| | | (parse-term (Num fullstop Num fullstop Num fullstop Num fullstop))
+| | | ((Term Num) fullstop Num fullstop Num fullstop Num fullstop)
+| | |((Rule (Term Num) fullstop) Num fullstop Num fullstop Num fullstop)
+| | |(parse-rule-list (Num fullstop Num fullstop Num fullstop))
+| | | (parse-rule (Num fullstop Num fullstop Num fullstop))
+| | | |(parse-term (Num fullstop Num fullstop Num fullstop))
+| | | |((Term Num) fullstop Num fullstop Num fullstop)
+| | | ((Rule (Term Num) fullstop) Num fullstop Num fullstop)
+| | | (parse-rule-list (Num fullstop Num fullstop))
+| | | |(parse-rule (Num fullstop Num fullstop))
+| | | | (parse-term (Num fullstop Num fullstop))
+| | | | ((Term Num) fullstop Num fullstop)
+| | | |((Rule (Term Num) fullstop) Num fullstop)
+| | | |(parse-rule-list (Num fullstop))
+| | | | (parse-rule (Num fullstop))
+| | | | |(parse-term (Num fullstop))
+| | | | |((Term Num) fullstop)
+| | | | ((Rule (Term Num) fullstop))
+| | | |((RuleList (Rule (Term Num) fullstop) (RuleList)))
+| | | ((RuleList
+        (Rule (Term Num) fullstop)
+        (RuleList (Rule (Term Num) fullstop) (RuleList))))
+| | |((RuleList
+       (Rule (Term Num) fullstop)
+       (RuleList
+        (Rule (Term Num) fullstop)
+        (RuleList (Rule (Term Num) fullstop) (RuleList)))))
+| | ((RuleList
+      (Rule (Term Num) fullstop)
+      (RuleList
+       (Rule (Term Num) fullstop)
+       (RuleList
+        (Rule (Term Num) fullstop)
+        (RuleList (Rule (Term Num) fullstop) (RuleList))))))
+| |((RuleList
+     (Rule (Term Num) fullstop)
+     (RuleList
+      (Rule (Term Num) fullstop)
+      (RuleList
+       (Rule (Term Num) fullstop)
+       (RuleList
+        (Rule (Term Num) fullstop)
+        (RuleList (Rule (Term Num) fullstop) (RuleList)))))))
+| ((RuleList
+    (Rule (Term Num) fullstop)
+    (RuleList
+     (Rule (Term Num) fullstop)
+     (RuleList
+      (Rule (Term Num) fullstop)
+      (RuleList
+       (Rule (Term Num) fullstop)
+       (RuleList
+        (Rule (Term Num) fullstop)
+        (RuleList (Rule (Term Num) fullstop) (RuleList))))))))
+|(Prog
+  (RuleList
+   (Rule (Term Num) fullstop)
+   (RuleList
+    (Rule (Term Num) fullstop)
+    (RuleList
+     (Rule (Term Num) fullstop)
+     (RuleList
+      (Rule (Term Num) fullstop)
+      (RuleList
+       (Rule (Term Num) fullstop)
+       (RuleList (Rule (Term Num) fullstop) (RuleList)))))))
+  EndMarker)
+Test test07 passed.
+|(parse-prog (Var fullstop Var fullstop Var fullstop EndMarker))
+| (parse-rule-list (Var fullstop Var fullstop Var fullstop))
+| |(parse-rule (Var fullstop Var fullstop Var fullstop))
+| | (parse-term (Var fullstop Var fullstop Var fullstop))
+| | ((Term Var) fullstop Var fullstop Var fullstop)
+| |((Rule (Term Var) fullstop) Var fullstop Var fullstop)
+| |(parse-rule-list (Var fullstop Var fullstop))
+| | (parse-rule (Var fullstop Var fullstop))
+| | |(parse-term (Var fullstop Var fullstop))
+| | |((Term Var) fullstop Var fullstop)
+| | ((Rule (Term Var) fullstop) Var fullstop)
+| | (parse-rule-list (Var fullstop))
+| | |(parse-rule (Var fullstop))
+| | | (parse-term (Var fullstop))
+| | | ((Term Var) fullstop)
+| | |((Rule (Term Var) fullstop))
+| | ((RuleList (Rule (Term Var) fullstop) (RuleList)))
+| |((RuleList
+     (Rule (Term Var) fullstop)
+     (RuleList (Rule (Term Var) fullstop) (RuleList))))
+| ((RuleList
+    (Rule (Term Var) fullstop)
+    (RuleList
+     (Rule (Term Var) fullstop)
+     (RuleList (Rule (Term Var) fullstop) (RuleList)))))
+|(Prog
+  (RuleList
+   (Rule (Term Var) fullstop)
+   (RuleList
+    (Rule (Term Var) fullstop)
+    (RuleList (Rule (Term Var) fullstop) (RuleList))))
+  EndMarker)
+Test test08 passed.
+|(parse-prog (Atom lparen Var rparen fullstop EndMarker))
+| (parse-rule-list (Atom lparen Var rparen fullstop))
+| |(parse-rule (Atom lparen Var rparen fullstop))
+| | (parse-term (Atom lparen Var rparen fullstop))
+| | |(parse-termlist (Var rparen fullstop))
+| | | (parse-term (Var rparen fullstop))
+| | | ((Term Var) rparen fullstop)
+| | |((TermList (Term Var)) rparen fullstop)
+| | ((Term Atom lparen (TermList (Term Var)) rparen) fullstop)
+| |((Rule (Term Atom lparen (TermList (Term Var)) rparen) fullstop))
+| ((RuleList
+    (Rule (Term Atom lparen (TermList (Term Var)) rparen) fullstop)
+    (RuleList)))
+|(Prog
+  (RuleList
+   (Rule (Term Atom lparen (TermList (Term Var)) rparen) fullstop)
+   (RuleList))
+  EndMarker)
+Test test09 passed.
+|(parse-prog (Atom lparen Var comma Var comma Var rparen fullstop EndMarker))
+| (parse-rule-list (Atom lparen Var comma Var comma Var rparen fullstop))
+| |(parse-rule (Atom lparen Var comma Var comma Var rparen fullstop))
+| | (parse-term (Atom lparen Var comma Var comma Var rparen fullstop))
+| | |(parse-termlist (Var comma Var comma Var rparen fullstop))
+| | | (parse-term (Var comma Var comma Var rparen fullstop))
+| | | ((Term Var) comma Var comma Var rparen fullstop)
+| | | (parse-termlist (comma Var comma Var rparen fullstop))
+| | | |(parse-term (comma Var comma Var rparen fullstop))
 | | | |#f
-| | | |(parse-termlist (Num rparen comma Atom lparen Atom comma Atom rparen comma Atom lparen Var comma Var comma Var rparen comma Atom lparen Atom lparen Atom lparen Atom lparen Atom rparen rparen rparen rparen rparen fullstop))
-| | | | (parse-term (Num rparen comma Atom lparen Atom comma Atom rparen comma Atom lparen Var comma Var comma Var rparen comma Atom lparen Atom lparen Atom lparen Atom lparen Atom rparen rparen rparen rparen rparen fullstop))
-| | | | ((Term Num) rparen comma Atom lparen Atom comma Atom rparen comma Atom lparen Var comma Var comma Var rparen comma Atom lparen Atom lparen Atom lparen Atom lparen Atom rparen rparen rparen rparen rparen fullstop)
-| | | |((TermList (Term Num)) rparen comma Atom lparen Atom comma Atom rparen comma Atom lparen Var comma Var comma Var rparen comma Atom lparen Atom lparen Atom lparen Atom lparen Atom rparen rparen rparen rparen rparen fullstop)
-| | | ((TermList (TermList (Term Num))) rparen comma Atom lparen Atom comma Atom rparen comma Atom lparen Var comma Var comma Var rparen comma Atom lparen Atom lparen Atom lparen Atom lparen Atom rparen rparen rparen rparen rparen fullstop)
-| | |((TermList (TermList (Term Num)) comma (Term Atom lparen (TermList (Term Num)) rparen)) rparen comma Atom lparen Atom comma Atom rparen comma Atom lparen Var comma Var comma Var rparen comma Atom lparen Atom lparen Atom lparen Atom lparen Atom rparen rparen rparen rparen rparen fullstop)
-| | ((Term Atom lparen (TermList (TermList (Term Num)) comma (Term Atom lparen (TermList (Term Num)) rparen)) rparen) comma Atom lparen Atom comma Atom rparen comma Atom lparen Var comma Var comma Var rparen comma Atom lparen Atom lparen Atom lparen Atom lparen Atom rparen rparen rparen rparen rparen fullstop)
-| |#<void>
+| | | |(parse-termlist (Var comma Var rparen fullstop))
+| | | | (parse-term (Var comma Var rparen fullstop))
+| | | | ((Term Var) comma Var rparen fullstop)
+| | | | (parse-termlist (comma Var rparen fullstop))
+| | | | |(parse-term (comma Var rparen fullstop))
+| | | | |#f
+| | | | |(parse-termlist (Var rparen fullstop))
+| | | | | (parse-term (Var rparen fullstop))
+| | | | | ((Term Var) rparen fullstop)
+| | | | |((TermList (Term Var)) rparen fullstop)
+| | | | (((TermList (Term Var))) rparen fullstop)
+| | | |((TermList (Term Var) comma (TermList (Term Var))) rparen fullstop)
+| | | (((TermList (Term Var) comma (TermList (Term Var)))) rparen fullstop)
+| | |((TermList
+       (Term Var)
+       comma
+       (TermList (Term Var) comma (TermList (Term Var))))
+      rparen
+      fullstop)
+| | ((Term
+      Atom
+      lparen
+      (TermList
+       (Term Var)
+       comma
+       (TermList (Term Var) comma (TermList (Term Var))))
+      rparen)
+     fullstop)
+| |((Rule
+     (Term
+      Atom
+      lparen
+      (TermList
+       (Term Var)
+       comma
+       (TermList (Term Var) comma (TermList (Term Var))))
+      rparen)
+     fullstop))
+| ((RuleList
+    (Rule
+     (Term
+      Atom
+      lparen
+      (TermList
+       (Term Var)
+       comma
+       (TermList (Term Var) comma (TermList (Term Var))))
+      rparen)
+     fullstop)
+    (RuleList)))
+|(Prog
+  (RuleList
+   (Rule
+    (Term
+     Atom
+     lparen
+     (TermList
+      (Term Var)
+      comma
+      (TermList (Term Var) comma (TermList (Term Var))))
+     rparen)
+    fullstop)
+   (RuleList))
+  EndMarker)
+Test test10 passed.
+|(parse-prog
+  (Atom
+   lparen
+   Var
+   comma
+   Var
+   comma
+   Var
+   comma
+   Var
+   comma
+   Var
+   comma
+   Var
+   comma
+   Var
+   comma
+   Var
+   rparen
+   fullstop
+   EndMarker))
+| (parse-rule-list
+   (Atom
+    lparen
+    Var
+    comma
+    Var
+    comma
+    Var
+    comma
+    Var
+    comma
+    Var
+    comma
+    Var
+    comma
+    Var
+    comma
+    Var
+    rparen
+    fullstop))
+| |(parse-rule
+    (Atom
+     lparen
+     Var
+     comma
+     Var
+     comma
+     Var
+     comma
+     Var
+     comma
+     Var
+     comma
+     Var
+     comma
+     Var
+     comma
+     Var
+     rparen
+     fullstop))
+| | (parse-term
+     (Atom
+      lparen
+      Var
+      comma
+      Var
+      comma
+      Var
+      comma
+      Var
+      comma
+      Var
+      comma
+      Var
+      comma
+      Var
+      comma
+      Var
+      rparen
+      fullstop))
+| | |(parse-termlist
+      (Var
+       comma
+       Var
+       comma
+       Var
+       comma
+       Var
+       comma
+       Var
+       comma
+       Var
+       comma
+       Var
+       comma
+       Var
+       rparen
+       fullstop))
+| | | (parse-term
+       (Var
+        comma
+        Var
+        comma
+        Var
+        comma
+        Var
+        comma
+        Var
+        comma
+        Var
+        comma
+        Var
+        comma
+        Var
+        rparen
+        fullstop))
+| | | ((Term Var)
+       comma
+       Var
+       comma
+       Var
+       comma
+       Var
+       comma
+       Var
+       comma
+       Var
+       comma
+       Var
+       comma
+       Var
+       rparen
+       fullstop)
+| | | (parse-termlist
+       (comma
+        Var
+        comma
+        Var
+        comma
+        Var
+        comma
+        Var
+        comma
+        Var
+        comma
+        Var
+        comma
+        Var
+        rparen
+        fullstop))
+| | | |(parse-term
+        (comma
+         Var
+         comma
+         Var
+         comma
+         Var
+         comma
+         Var
+         comma
+         Var
+         comma
+         Var
+         comma
+         Var
+         rparen
+         fullstop))
+| | | |#f
+| | | |(parse-termlist
+        (Var
+         comma
+         Var
+         comma
+         Var
+         comma
+         Var
+         comma
+         Var
+         comma
+         Var
+         comma
+         Var
+         rparen
+         fullstop))
+| | | | (parse-term
+         (Var
+          comma
+          Var
+          comma
+          Var
+          comma
+          Var
+          comma
+          Var
+          comma
+          Var
+          comma
+          Var
+          rparen
+          fullstop))
+| | | | ((Term Var)
+         comma
+         Var
+         comma
+         Var
+         comma
+         Var
+         comma
+         Var
+         comma
+         Var
+         comma
+         Var
+         rparen
+         fullstop)
+| | | | (parse-termlist
+         (comma
+          Var
+          comma
+          Var
+          comma
+          Var
+          comma
+          Var
+          comma
+          Var
+          comma
+          Var
+          rparen
+          fullstop))
+| | | | |(parse-term
+          (comma
+           Var
+           comma
+           Var
+           comma
+           Var
+           comma
+           Var
+           comma
+           Var
+           comma
+           Var
+           rparen
+           fullstop))
+| | | | |#f
+| | | | |(parse-termlist
+          (Var
+           comma
+           Var
+           comma
+           Var
+           comma
+           Var
+           comma
+           Var
+           comma
+           Var
+           rparen
+           fullstop))
+| | | | | (parse-term
+           (Var
+            comma
+            Var
+            comma
+            Var
+            comma
+            Var
+            comma
+            Var
+            comma
+            Var
+            rparen
+            fullstop))
+| | | | | ((Term Var)
+           comma
+           Var
+           comma
+           Var
+           comma
+           Var
+           comma
+           Var
+           comma
+           Var
+           rparen
+           fullstop)
+| | | | | (parse-termlist
+           (comma Var comma Var comma Var comma Var comma Var rparen fullstop))
+| | | |[10](parse-term
+            (comma
+             Var
+             comma
+             Var
+             comma
+             Var
+             comma
+             Var
+             comma
+             Var
+             rparen
+             fullstop))
+| | | |[10]#f
+| | | |[10](parse-termlist
+            (Var comma Var comma Var comma Var comma Var rparen fullstop))
+| | | |[11](parse-term
+            (Var comma Var comma Var comma Var comma Var rparen fullstop))
+| | | |[11]((Term Var) comma Var comma Var comma Var comma Var rparen fullstop)
+| | | |[11](parse-termlist
+            (comma Var comma Var comma Var comma Var rparen fullstop))
+| | | |[12](parse-term
+            (comma Var comma Var comma Var comma Var rparen fullstop))
+| | | |[12]#f
+| | | |[12](parse-termlist (Var comma Var comma Var comma Var rparen fullstop))
+| | | |[13](parse-term (Var comma Var comma Var comma Var rparen fullstop))
+| | | |[13]((Term Var) comma Var comma Var comma Var rparen fullstop)
+| | | |[13](parse-termlist (comma Var comma Var comma Var rparen fullstop))
+| | | |[14](parse-term (comma Var comma Var comma Var rparen fullstop))
+| | | |[14]#f
+| | | |[14](parse-termlist (Var comma Var comma Var rparen fullstop))
+| | | |[15](parse-term (Var comma Var comma Var rparen fullstop))
+| | | |[15]((Term Var) comma Var comma Var rparen fullstop)
+| | | |[15](parse-termlist (comma Var comma Var rparen fullstop))
+| | | |[16](parse-term (comma Var comma Var rparen fullstop))
+| | | |[16]#f
+| | | |[16](parse-termlist (Var comma Var rparen fullstop))
+| | | |[17](parse-term (Var comma Var rparen fullstop))
+| | | |[17]((Term Var) comma Var rparen fullstop)
+| | | |[17](parse-termlist (comma Var rparen fullstop))
+| | | |[18](parse-term (comma Var rparen fullstop))
+| | | |[18]#f
+| | | |[18](parse-termlist (Var rparen fullstop))
+| | | |[19](parse-term (Var rparen fullstop))
+| | | |[19]((Term Var) rparen fullstop)
+| | | |[18]((TermList (Term Var)) rparen fullstop)
+| | | |[17](((TermList (Term Var))) rparen fullstop)
+| | | |[16]((TermList (Term Var) comma (TermList (Term Var))) rparen fullstop)
+| | | |[15](((TermList (Term Var) comma (TermList (Term Var))))
+            rparen
+            fullstop)
+| | | |[14]((TermList
+             (Term Var)
+             comma
+             (TermList (Term Var) comma (TermList (Term Var))))
+            rparen
+            fullstop)
+| | | |[13](((TermList
+              (Term Var)
+              comma
+              (TermList (Term Var) comma (TermList (Term Var)))))
+            rparen
+            fullstop)
+| | | |[12]((TermList
+             (Term Var)
+             comma
+             (TermList
+              (Term Var)
+              comma
+              (TermList (Term Var) comma (TermList (Term Var)))))
+            rparen
+            fullstop)
+| | | |[11](((TermList
+              (Term Var)
+              comma
+              (TermList
+               (Term Var)
+               comma
+               (TermList (Term Var) comma (TermList (Term Var))))))
+            rparen
+            fullstop)
+| | | |[10]((TermList
+             (Term Var)
+             comma
+             (TermList
+              (Term Var)
+              comma
+              (TermList
+               (Term Var)
+               comma
+               (TermList (Term Var) comma (TermList (Term Var))))))
+            rparen
+            fullstop)
+| | | | | (((TermList
+             (Term Var)
+             comma
+             (TermList
+              (Term Var)
+              comma
+              (TermList
+               (Term Var)
+               comma
+               (TermList (Term Var) comma (TermList (Term Var)))))))
+           rparen
+           fullstop)
+| | | | |((TermList
+           (Term Var)
+           comma
+           (TermList
+            (Term Var)
+            comma
+            (TermList
+             (Term Var)
+             comma
+             (TermList
+              (Term Var)
+              comma
+              (TermList (Term Var) comma (TermList (Term Var)))))))
+          rparen
+          fullstop)
+| | | | (((TermList
+           (Term Var)
+           comma
+           (TermList
+            (Term Var)
+            comma
+            (TermList
+             (Term Var)
+             comma
+             (TermList
+              (Term Var)
+              comma
+              (TermList (Term Var) comma (TermList (Term Var))))))))
+         rparen
+         fullstop)
+| | | |((TermList
+         (Term Var)
+         comma
+         (TermList
+          (Term Var)
+          comma
+          (TermList
+           (Term Var)
+           comma
+           (TermList
+            (Term Var)
+            comma
+            (TermList
+             (Term Var)
+             comma
+             (TermList (Term Var) comma (TermList (Term Var))))))))
+        rparen
+        fullstop)
+| | | (((TermList
+         (Term Var)
+         comma
+         (TermList
+          (Term Var)
+          comma
+          (TermList
+           (Term Var)
+           comma
+           (TermList
+            (Term Var)
+            comma
+            (TermList
+             (Term Var)
+             comma
+             (TermList (Term Var) comma (TermList (Term Var)))))))))
+       rparen
+       fullstop)
+| | |((TermList
+       (Term Var)
+       comma
+       (TermList
+        (Term Var)
+        comma
+        (TermList
+         (Term Var)
+         comma
+         (TermList
+          (Term Var)
+          comma
+          (TermList
+           (Term Var)
+           comma
+           (TermList
+            (Term Var)
+            comma
+            (TermList (Term Var) comma (TermList (Term Var)))))))))
+      rparen
+      fullstop)
+| | ((Term
+      Atom
+      lparen
+      (TermList
+       (Term Var)
+       comma
+       (TermList
+        (Term Var)
+        comma
+        (TermList
+         (Term Var)
+         comma
+         (TermList
+          (Term Var)
+          comma
+          (TermList
+           (Term Var)
+           comma
+           (TermList
+            (Term Var)
+            comma
+            (TermList (Term Var) comma (TermList (Term Var)))))))))
+      rparen)
+     fullstop)
+| |((Rule
+     (Term
+      Atom
+      lparen
+      (TermList
+       (Term Var)
+       comma
+       (TermList
+        (Term Var)
+        comma
+        (TermList
+         (Term Var)
+         comma
+         (TermList
+          (Term Var)
+          comma
+          (TermList
+           (Term Var)
+           comma
+           (TermList
+            (Term Var)
+            comma
+            (TermList (Term Var) comma (TermList (Term Var)))))))))
+      rparen)
+     fullstop))
+| ((RuleList
+    (Rule
+     (Term
+      Atom
+      lparen
+      (TermList
+       (Term Var)
+       comma
+       (TermList
+        (Term Var)
+        comma
+        (TermList
+         (Term Var)
+         comma
+         (TermList
+          (Term Var)
+          comma
+          (TermList
+           (Term Var)
+           comma
+           (TermList
+            (Term Var)
+            comma
+            (TermList (Term Var) comma (TermList (Term Var)))))))))
+      rparen)
+     fullstop)
+    (RuleList)))
+|(Prog
+  (RuleList
+   (Rule
+    (Term
+     Atom
+     lparen
+     (TermList
+      (Term Var)
+      comma
+      (TermList
+       (Term Var)
+       comma
+       (TermList
+        (Term Var)
+        comma
+        (TermList
+         (Term Var)
+         comma
+         (TermList
+          (Term Var)
+          comma
+          (TermList
+           (Term Var)
+           comma
+           (TermList (Term Var) comma (TermList (Term Var)))))))))
+     rparen)
+    fullstop)
+   (RuleList))
+  EndMarker)
+Test test11 passed.
+|(parse-prog (Atom lparen Var Var Var rparen fullstop EndMarker))
+| (parse-rule-list (Atom lparen Var Var Var rparen fullstop))
+| |(parse-rule (Atom lparen Var Var Var rparen fullstop))
+| | (parse-term (Atom lparen Var Var Var rparen fullstop))
+| | |(parse-termlist (Var Var Var rparen fullstop))
+| | | (parse-term (Var Var Var rparen fullstop))
+| | | ((Term Var) Var Var rparen fullstop)
+| | |((TermList (Term Var)) Var Var rparen fullstop)
+| | #f
+| |#f
+| #f
+|#f
+Test test13 passed.
+|(parse-prog
+  (Atom lparen Num comma Num comma Num Num rparen fullstop EndMarker))
+| (parse-rule-list (Atom lparen Num comma Num comma Num Num rparen fullstop))
+| |(parse-rule (Atom lparen Num comma Num comma Num Num rparen fullstop))
+| | (parse-term (Atom lparen Num comma Num comma Num Num rparen fullstop))
+| | |(parse-termlist (Num comma Num comma Num Num rparen fullstop))
+| | | (parse-term (Num comma Num comma Num Num rparen fullstop))
+| | | ((Term Num) comma Num comma Num Num rparen fullstop)
+| | | (parse-termlist (comma Num comma Num Num rparen fullstop))
+| | | |(parse-term (comma Num comma Num Num rparen fullstop))
+| | | |#f
+| | | |(parse-termlist (Num comma Num Num rparen fullstop))
+| | | | (parse-term (Num comma Num Num rparen fullstop))
+| | | | ((Term Num) comma Num Num rparen fullstop)
+| | | | (parse-termlist (comma Num Num rparen fullstop))
+| | | | |(parse-term (comma Num Num rparen fullstop))
+| | | | |#f
+| | | | |(parse-termlist (Num Num rparen fullstop))
+| | | | | (parse-term (Num Num rparen fullstop))
+| | | | | ((Term Num) Num rparen fullstop)
+| | | | |((TermList (Term Num)) Num rparen fullstop)
+| | | | (((TermList (Term Num))) Num rparen fullstop)
+| | | |((TermList (Term Num) comma (TermList (Term Num))) Num rparen fullstop)
+| | | (((TermList (Term Num) comma (TermList (Term Num)))) Num rparen fullstop)
+| | |((TermList
+       (Term Num)
+       comma
+       (TermList (Term Num) comma (TermList (Term Num))))
+      Num
+      rparen
+      fullstop)
+| | #f
+| |#f
+| #f
+|#f
+Test test14 passed.
+|(parse-prog (Atom lparen Atom lparen Var rparen fullstop EndMarker))
+| (parse-rule-list (Atom lparen Atom lparen Var rparen fullstop))
+| |(parse-rule (Atom lparen Atom lparen Var rparen fullstop))
+| | (parse-term (Atom lparen Atom lparen Var rparen fullstop))
+| | |(parse-termlist (Atom lparen Var rparen fullstop))
+| | | (parse-term (Atom lparen Var rparen fullstop))
+| | | |(parse-termlist (Var rparen fullstop))
+| | | | (parse-term (Var rparen fullstop))
+| | | | ((Term Var) rparen fullstop)
+| | | |((TermList (Term Var)) rparen fullstop)
+| | | ((Term Atom lparen (TermList (Term Var)) rparen) fullstop)
+| | |((TermList (Term Atom lparen (TermList (Term Var)) rparen)) fullstop)
+| | #f
+| |#f
+| #f
+|#f
+Test test15 passed.
+|(parse-prog (Atom lparen lsqbrack rsqbrack rparen fullstop EndMarker))
+| (parse-rule-list (Atom lparen lsqbrack rsqbrack rparen fullstop))
+| |(parse-rule (Atom lparen lsqbrack rsqbrack rparen fullstop))
+| | (parse-term (Atom lparen lsqbrack rsqbrack rparen fullstop))
+| | |(parse-termlist (lsqbrack rsqbrack rparen fullstop))
+| | | (parse-term (lsqbrack rsqbrack rparen fullstop))
+| | | |(parse-lterm (rsqbrack rparen fullstop))
+| | | |#f
+| | | #f
+| | | (parse-termlist (rsqbrack rparen fullstop))
+| | | |(parse-term (rsqbrack rparen fullstop))
+| | | |#f
+| | | |(parse-termlist (rparen fullstop))
+| | | | (parse-term (rparen fullstop))
+| | | | #f
+| | | | (parse-termlist (fullstop))
+| | | | |(parse-term (fullstop))
+| | | | |#f
+| | | | |(parse-termlist ())
+| | | | | (parse-term ())
+| | | | | #f
+| | | | |#f
+| | | | #f
+| | | |#f
+| | | #f
+| | |#f
+| | #f
+| |#f
+| #f
+|#f
