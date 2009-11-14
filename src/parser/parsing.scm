@@ -193,15 +193,12 @@
                       (if (not parse-result) #f
                         (let ([tlist (get-result parse-result)] [i (get-next parse-result)])
                           (if (not (equal? (peek-term i) right-paren)) #f
-                            (pair (list 'Term term left-paren tlist right-paren) (get-next i)))))))))))))))
+                            (pair (list 'Term term left-paren tlist right-paren) (get-next i)))))))))))
+            (else #f)))))
 
   ; TermList → Term
   ; TermList → TermList , Term
   (define [parse-termlist i]
-    (display "\n")
-    (display i)
-    (display "\n")
-    (display "\n")
     (let ([parse-res (parse-term i)]) 
       (if (and parse-res (not (equal? comma (peek-term (get-next parse-res)))))
         (let ([term (get-result parse-res)] [i (get-next parse-res)])
@@ -234,10 +231,11 @@
                         (let ([parse-result (parse-term i)])
                           (if (not parse-result) #f
                             (let ([term (get-result parse-result)] [i (get-next parse-result)])
-                              (pair (list 'LTerm lbrack term-list the-pipe term rbrack) i)))))))))))))))
+                              (pair (list 'LTerm lbrack term-list the-pipe term rbrack) i))))))
+                     (else #f))))))))))
 
 
-;#|
+#|
  (trace parse-prog)
  (trace parse-a-body)
  (trace parse-o-body)
@@ -247,5 +245,5 @@
  (trace parse-rule-list)
  (trace parse-rule)
  (trace parse-lterm)
-;|#
+|#
 )
